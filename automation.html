@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <title>Email Agent – Automation Rules Engine</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family:'Inter',sans-serif; background:#f2f5fa; }
+    .navbar { background:#3b82f6; }
+    .navbar-brand, .nav-link { color:#fff !important; font-weight:600; }
+    .card { background:#f7f9fc; border:none; border-radius:1rem; box-shadow:0 0 10px rgba(0,0,0,0.04); }
+    .btn { border-radius:2rem; font-weight:600; }
+    .badge { border-radius:2rem; font-weight:600; }
+    .drag-handle { cursor:grab; color:#9ca3af; }
+    .chip { display:inline-block; padding:0.25rem 0.6rem; background:#e5ecfb; color:#3b82f6; border-radius:2rem; font-size:0.8rem; font-weight:600; margin-right:0.3rem; }
+    .highlight-pass { background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px; }
+    .highlight-warn { background:#fef9c3; color:#92400e; padding:2px 6px; border-radius:4px; }
+    .highlight-block { background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg mb-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Email Agent</a>
+    </div>
+  </nav>
+
+  <div class="container py-3">
+    <!-- Toolbar -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Automation Rules</h4>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-dark">Export</button>
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">+ Create Rule</button>
+      </div>
+    </div>
+
+    <!-- Rules Table -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th style="width:50px;"></th>
+                <th>Name</th>
+                <th>Conditions</th>
+                <th>Actions</th>
+                <th>Matches (7d)</th>
+                <th>Status</th>
+                <th class="text-end">Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center"><span class="drag-handle bi bi-grip-vertical"></span></td>
+                <td><strong>Refund Auto-Draft</strong><br><small class="text-muted">Auto handles refund inquiries</small></td>
+                <td>
+                  <span class="chip">Subject: contains "refund"</span>
+                  <span class="chip">Intent = refund</span>
+                </td>
+                <td>
+                  <span class="chip">Prompt: Return Policy Inquiry</span>
+                  <span class="chip">Queue: Billing</span>
+                  <span class="chip">Approval Required</span>
+                </td>
+                <td>42</td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" checked/>
+                  </div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
+                  <button class="btn btn-sm btn-outline-dark">Clone</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center"><span class="drag-handle bi bi-grip-vertical"></span></td>
+                <td><strong>VIP Escalation</strong><br><small class="text-muted">Escalates VIP domains</small></td>
+                <td><span class="chip">Sender domain: @vip.com</span></td>
+                <td><span class="chip">Queue: VIP</span><span class="chip">SLA: P1</span></td>
+                <td>12</td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox"/>
+                  </div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
+                  <button class="btn btn-sm btn-outline-dark">Clone</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="small text-muted mt-2">Drag to reorder by priority. Rules run top-to-bottom.</div>
+  </div>
+
+  <!-- Rule Modal -->
+  <div class="modal fade" id="ruleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Rule Editor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row g-4">
+              <div class="col-lg-4">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h6 class="mb-3">Basics</h6>
+                    <div class="mb-3">
+                      <label class="form-label">Name</label>
+                      <input class="form-control" placeholder="e.g., Refund Auto-Draft"/>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Description</label>
+                      <textarea class="form-control" rows="2" placeholder="Short description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Priority</label>
+                      <input type="number" class="form-control" value="1"/>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" checked/>
+                      <label class="form-check-label">Enabled</label>
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" checked/>
+                      <label class="form-check-label">Stop on Match</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <ul class="nav nav-pills mb-3">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#condTab" type="button">Conditions</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#actTab" type="button">Actions</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#simTab" type="button">Simulation</button></li>
+                </ul>
+                <div class="tab-content">
+                  <!-- Conditions -->
+                  <div class="tab-pane fade show active" id="condTab">
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h6 class="mb-3">All Conditions (AND)</h6>
+                        <div class="mb-2">
+                          <select class="form-select mb-2">
+                            <option>Subject contains</option>
+                            <option>Body contains</option>
+                            <option>Sender domain</option>
+                            <option>Intent equals</option>
+                            <option>Tone equals</option>
+                          </select>
+                          <input class="form-control" placeholder="Value"/>
+                        </div>
+                        <button class="btn btn-outline-dark btn-sm">+ Add Condition</button>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="mb-3">Any Condition (OR)</h6>
+                        <div class="mb-2">
+                          <select class="form-select mb-2">
+                            <option>Subject contains</option>
+                            <option>Body regex</option>
+                            <option>Sender domain</option>
+                          </select>
+                          <input class="form-control" placeholder="Value"/>
+                        </div>
+                        <button class="btn btn-outline-dark btn-sm">+ Add Condition</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Actions -->
+                  <div class="tab-pane fade" id="actTab">
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h6 class="mb-3">Routing & Actions</h6>
+                        <div class="row g-2 mb-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Queue</label>
+                            <select class="form-select"><option>Support</option><option>Billing</option><option>VIP</option></select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">SLA</label>
+                            <select class="form-select"><option>P1</option><option>P2</option></select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">Prompt</label>
+                            <select class="form-select"><option>Return Policy Inquiry</option><option>Shipping Delay</option></select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">Labels</label>
+                            <input class="form-control" placeholder="AI-draft, High-priority"/>
+                          </div>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input class="form-check-input" type="checkbox" checked/>
+                          <label class="form-check-label">Require Human Approval</label>
+                        </div>
+                        <div class="mb-2">
+                          <label class="form-label">Attach KB Entries</label>
+                          <div><span class="chip">Return Policy (2025)</span><span class="chip">Shipping SOP v3</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="mb-3">Guardrails</h6>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked/><label class="form-check-label">Check banned phrases</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked/><label class="form-check-label">Enforce tone compliance</label></div>
+                        <div class="mb-2">
+                          <label class="form-label">Max Refund %</label>
+                          <input type="number" class="form-control" value="20"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Simulation -->
+                  <div class="tab-pane fade" id="simTab">
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h6 class="mb-3">Simulation Input</h6>
+                        <input class="form-control mb-2" placeholder="Subject"/>
+                        <textarea class="form-control mb-2" rows="3" placeholder="Body"></textarea>
+                        <button class="btn btn-outline-primary">Run Simulation</button>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="mb-3">Result</h6>
+                        <div><span class="highlight-pass">Matched: Subject contains 'refund'</span></div>
+                        <div><span class="highlight-warn">Warn: Phrase 'ASAP' detected</span></div>
+                        <div><span class="highlight-block">Blocked: Refund 50% > cap</span></div>
+                        <hr>
+                        <div>→ Would trigger <strong>Return Policy Inquiry</strong> prompt, routed to <strong>Billing</strong> queue.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- tab-content -->
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-dark">Delete</button>
+          <div class="d-flex gap-2">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-success">Save Rule</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+</body>
+</html>

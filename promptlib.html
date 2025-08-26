@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Prompt Library & Knowledge Base</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    html, body {
+      font-family: 'Inter', sans-serif !important;
+      background: #f2f5fa;
+    }
+    /* Theme */
+    .navbar { background:#3b82f6 !important; color:#fff; }
+    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-text { color:#fff !important; font-weight:600; }
+    .navbar .dropdown-menu {
+      background:#fff; color:#22223b; border-radius:.6rem; box-shadow:0 2px 16px rgba(0,0,0,.09);
+      margin-top:.5rem !important; font-family:'Inter',sans-serif;
+    }
+    .navbar .dropdown-item { color:#22223b !important; }
+    .navbar .dropdown-item:active, .navbar .dropdown-item:focus { background:#f2f5fa !important; color:#3b82f6 !important; }
+    .navbar-toggler { border-color:#fff !important; }
+    .navbar-toggler-icon {
+      background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+    .card { background:#f7f9fc !important; border:none !important; border-radius:1rem !important; box-shadow:0 0 10px rgba(0,0,0,0.04) !important; }
+    .card-body { padding:1.3rem 1.5rem; }
+    .badge { border-radius:2rem !important; font-weight:600 !important; font-size:.75rem !important; padding:.4rem .9rem !important; }
+    .btn { font-weight:600; border-radius:2rem; padding:.45rem 1.1rem; font-size:1rem; border:none; box-shadow:none; transition:background .15s,color .15s; }
+    .btn-primary { background:#3b82f6 !important; color:#fff !important; }
+    .btn-secondary { background:#e5ecfb !important; color:#3b82f6 !important; }
+    .btn-success { background:#22c55e !important; color:#fff !important; }
+    .btn-info { background:#def7ec !important; color:#2563eb !important; }
+    .btn-warning { background:#fde68a !important; color:#b45309 !important; }
+    .btn-dark { background:#e5e7eb !important; color:#22223b !important; }
+    .btn-outline-primary, .btn-outline-secondary, .btn-outline-info, .btn-outline-dark {
+      border:none !important; box-shadow:none !important;
+    }
+    .btn-outline-primary { background:#e5ecfb !important; color:#3b82f6 !important; }
+    .btn-outline-secondary { background:#e5ecfb !important; color:#3b82f6 !important; }
+    .btn-outline-info { background:#def7ec !important; color:#2563eb !important; }
+    .btn-outline-dark { background:#e5e7eb !important; color:#22223b !important; }
+    .btn:focus, .btn:active { outline:none !important; box-shadow:0 0 0 2px #3b82f633 !important; }
+
+    /* QA badges */
+    .badge-qa-tone { background:#22c55e !important; color:#fff !important; }
+    .badge-qa-compliance { background:#3b82f6 !important; color:#fff !important; }
+    .badge-qa-flagged { background:#ef4444 !important; color:#fff !important; }
+
+    .form-control, .form-select { border-radius:1.6rem; font-size:1rem; font-family:'Inter', sans-serif; }
+    .modal-content { border-radius:1rem; font-family:'Inter', sans-serif; }
+    .modal-header, .modal-footer { padding:1rem 1.5rem; }
+    .card-title, .card h5, h5, h6 { font-weight:700; }
+
+    /* Tag chips (shared) */
+    .tag-chip { background:#e5ecfb; color:#3b82f6; border-radius:2rem; padding:.2rem .6rem; font-size:.8rem; font-weight:600; display:inline-flex; align-items:center; }
+    .tag-chip .remove { cursor:pointer; margin-left:.35rem; opacity:.7; }
+
+    /* KB table tweaks */
+    .table thead th { font-weight:700; }
+    .table td, .table th { vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg mb-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Email Agent</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUserSettings" aria-controls="navbarUserSettings" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarUserSettings">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userSettingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              User / Settings
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettingsDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Feature Tabs Navigation -->
+  <ul class="nav nav-tabs justify-content-center mb-3" id="featureTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="prompt-tab" data-bs-toggle="tab" data-bs-target="#prompt-library" type="button" role="tab">Prompt Library</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="kb-tab" data-bs-toggle="tab" data-bs-target="#knowledge-base" type="button" role="tab">Knowledge Base</button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="featureTabsContent">
+    <!-- Prompt Library Tab -->
+    <div class="tab-pane fade show active" id="prompt-library" role="tabpanel">
+      <div class="container-fluid py-3">
+        <div class="row">
+          <div class="col-12">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h5 class="card-title">Prompt Library</h5>
+                <p class="text-muted mb-3">Manage, test, and refine prompts used by the AI agent for generating email replies. Prompts can inject Knowledge Base context via <code>{context}</code>.</p>
+                <div class="d-flex justify-content-end mb-3">
+                  <button id="addPromptBtn" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#promptModal">+ Add New Prompt</button>
+                </div>
+                <input type="text" class="form-control mb-3" placeholder="Search prompts...">
+                <div id="promptList" class="list-group"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge Base Tab -->
+    <div class="tab-pane fade" id="knowledge-base" role="tabpanel">
+      <div class="container py-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+          <h5 class="mb-0">Knowledge Base</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#kbEntryModal" id="addKbBtn">+ Add Entry</button>
+            <button class="btn btn-outline-dark" id="importKbBtn">Import</button>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-md-4"><input id="kbSearch" class="form-control" placeholder="Search title, tags, content..."></div>
+          <div class="col-md-3">
+            <select id="kbTypeFilter" class="form-select">
+              <option value="">All Types</option>
+              <option value="doc">Document</option>
+              <option value="url">URL</option>
+              <option value="note">Note</option>
+            </select>
+          </div>
+          <div class="col-md-3"><input id="kbTagFilter" class="form-control" placeholder="Filter by tag (e.g., policy)"></div>
+          <div class="col-md-2 text-md-end"><button id="clearKbFilters" class="btn btn-outline-dark w-100">Clear</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th style="min-width:220px;">Title</th>
+                    <th>Type</th>
+                    <th>Tags</th>
+                    <th>Attached To</th>
+                    <th>Updated</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="kbTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompt Create/Edit Modal -->
+  <div class="modal fade" id="promptModal" tabindex="-1" aria-labelledby="promptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="promptModalLabel">New Prompt</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="promptForm">
+            <input type="hidden" id="promptIndex" value="-1">
+            <div class="row g-4">
+              <!-- Left column -->
+              <div class="col-lg-8">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h6 class="mb-3">Template</h6>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Title</label>
+                      <input type="text" class="form-control" id="promptTitle" placeholder="e.g., Return Policy Inquiry" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Subject Template</label>
+                      <input type="text" class="form-control" id="promptSubject" placeholder="e.g., Re: Your return request">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Body Template</label>
+                      <textarea class="form-control" id="promptBody" rows="10" placeholder="Write the email body with variables like {{customer_name}}, {{order_id}}, and include {context} for RAG injection (optional)." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Variables (for testing)</label>
+                      <div id="varRows" class="row g-2">
+                        <div class="col-5"><input class="form-control var-key" placeholder="variable name (e.g., customer_name)"></div>
+                        <div class="col-6"><input class="form-control var-val" placeholder="value (e.g., Emily)"></div>
+                        <div class="col-1 d-grid"><button type="button" class="btn btn-secondary add-var">+</button></div>
+                      </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                      <button type="button" id="testPromptBtn" class="btn btn-outline-primary">Test Generate</button>
+                      <button type="button" id="clearVarsBtn" class="btn btn-outline-dark">Clear Vars</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="mb-3">Preview</h6>
+                    <div class="mb-2 small text-muted">Subject</div>
+                    <div class="border rounded p-2 bg-white mb-3" id="previewSubject" style="min-height: 42px;"></div>
+                    <div class="mb-2 small text-muted">Body</div>
+                    <div class="border rounded p-3 bg-white" id="previewBody" style="min-height: 160px; white-space: pre-wrap;"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Right column -->
+              <div class="col-lg-4">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h6 class="mb-3">Labels &amp; Status</h6>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Status</label>
+                      <select id="promptStatus" class="form-select">
+                        <option value="active">Active</option>
+                        <option value="draft" selected>Draft</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Tags (multiple)</label>
+                      <div id="tagsContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                      <div class="input-group">
+                        <input id="tagInput" type="text" class="form-control" placeholder="Type tag and press Enter">
+                        <button type="button" class="btn btn-secondary" id="addTagBtn">Add</button>
+                      </div>
+                      <div class="form-text">Examples: refund, shipping, inquiry, complaint</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Intents (multi-select)</label>
+                      <select id="promptIntents" class="form-select" multiple>
+                        <option value="refund">Refund</option>
+                        <option value="shipping">Shipping</option>
+                        <option value="inquiry">Inquiry</option>
+                        <option value="complaint">Complaint</option>
+                        <option value="warranty">Warranty</option>
+                      </select>
+                      <div class="form-text">Intent labels help routing decide when this template should fire.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Trigger Rules</label>
+                      <input id="triggerKeywords" class="form-control mb-2" placeholder="Keywords (comma separated)">
+                      <input id="triggerRegex" class="form-control mb-2" placeholder="Regex includes (optional)">
+                      <input id="triggerRecipients" class="form-control" placeholder="Recipient mailbox (optional)">
+                      <div class="form-text">Optional routing helpers; exact logic implemented server-side.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h6 class="mb-3">Model &amp; Safety</h6>
+                    <div class="mb-2">
+                      <label class="form-label fw-semibold">Provider</label>
+                      <select id="modelProvider" class="form-select">
+                        <option>OpenAI</option>
+                        <option>Google</option>
+                        <option>Anthropic</option>
+                      </select>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label fw-semibold">Model</label>
+                      <select id="modelName" class="form-select">
+                        <option>gpt-4o</option>
+                        <option>gpt-4.1-mini</option>
+                        <option>gemini-1.5-pro</option>
+                        <option>claude-3.5-sonnet</option>
+                      </select>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label fw-semibold">Temperature</label>
+                      <input id="modelTemp" type="range" class="form-range" min="0" max="1" step="0.05" value="0.3">
+                    </div>
+                    <div class="mb-2 form-check">
+                      <input id="safetyQA" class="form-check-input" type="checkbox" checked>
+                      <label class="form-check-label" for="safetyQA">Enable Safety QA (forbidden phrases, tone)</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="mb-3">Knowledge (RAG)</h6>
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" id="ragEnabled">
+                      <label class="form-check-label" for="ragEnabled">Enable Knowledge Retrieval</label>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label fw-semibold">Attach knowledge entries</label>
+                      <div id="kbAttachList" class="d-flex flex-column gap-1"></div>
+                      <div class="form-text">Manage entries in the Knowledge Base tab.</div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label fw-semibold">Max context chunks</label>
+                      <input id="ragK" type="number" class="form-control" min="1" max="10" value="3">
+                    </div>
+                    <div class="form-text">If RAG is enabled and {context} is present in Body Template, selected entries are injected.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <div>
+            <button type="button" id="deletePromptBtn" class="btn btn-outline-dark d-none">Delete</button>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="saveDraftBtn" class="btn btn-outline-primary">Save as Draft</button>
+            <button type="button" id="saveActiveBtn" class="btn btn-success">Save &amp; Activate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KB Create/Edit Modal -->
+  <div class="modal fade" id="kbEntryModal" tabindex="-1" aria-labelledby="kbEntryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="kbEntryModalLabel">New Knowledge Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="kbForm">
+            <input type="hidden" id="kbIndex" value="-1">
+            <div class="row g-4">
+              <div class="col-lg-8">
+                <div class="card mb-3"><div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Title</label>
+                    <input id="kbTitle" class="form-control" placeholder="e.g., Return Policy (2025)" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Type</label>
+                    <select id="kbType" class="form-select">
+                      <option value="doc">Document</option>
+                      <option value="url">URL</option>
+                      <option value="note">Note</option>
+                    </select>
+                  </div>
+                  <div class="mb-3" id="kbUrlGroup" style="display:none;">
+                    <label class="form-label fw-semibold">Source URL</label>
+                    <input id="kbUrl" class="form-control" placeholder="https://...">
+                  </div>
+                  <div class="mb-3" id="kbUploadGroup">
+                    <label class="form-label fw-semibold">Attach Document</label>
+                    <input id="kbFile" class="form-control" type="file">
+                    <div class="form-text">Uploads are simulated in this demo; filename will be stored as metadata.</div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Content (for Notes or extracted text)</label>
+                    <textarea id="kbContent" rows="8" class="form-control" placeholder="Paste policy text, FAQs, or extracted content..."></textarea>
+                  </div>
+                </div></div>
+                <div class="card"><div class="card-body">
+                  <h6 class="mb-2">Version Note</h6>
+                  <input id="kbVersion" class="form-control" placeholder="e.g., Updated return window to 45 days">
+                </div></div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card mb-3"><div class="card-body">
+                  <h6 class="mb-2">Tags</h6>
+                  <div id="kbTagsContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                  <div class="input-group">
+                    <input id="kbTagInput" class="form-control" placeholder="Add tag and press Enter">
+                    <button type="button" class="btn btn-secondary" id="kbAddTagBtn">Add</button>
+                  </div>
+                  <div class="form-text">Examples: policy, refund, shipping, warranty</div>
+                </div></div>
+                <div class="card"><div class="card-body">
+                  <h6 class="mb-2">Attachment Metadata</h6>
+                  <div class="small text-muted" id="kbMeta">No file selected.</div>
+                </div></div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" id="kbDeleteBtn" class="btn btn-outline-dark d-none">Delete</button>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="kbSaveBtn" class="btn btn-success">Save Entry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KB Attach to Prompts Modal -->
+  <div class="modal fade" id="kbAttachModal" tabindex="-1" aria-labelledby="kbAttachModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="kbAttachModalLabel">Attach Knowledge to Prompts</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="kbAttachPromptList"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="kbAttachSaveBtn" class="btn btn-success">Save Attachments</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle (with Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Prompt Library JS -->
+  <script>
+    // Simple in-memory store for demo
+    const prompts = [
+      {
+        title: "Return Policy Inquiry",
+        subject: "Re: Your return request",
+        body: "Hello {{customer_name}},\\n\\nOur return policy allows returns within 30 days...\\n\\n{context}\\n\\nBest regards,\\nSupport",
+        status: "active",
+        tags: ["refund","policy"],
+        intents: ["refund","inquiry"],
+        triggers: { keywords: "return, refund", regex: "", recipients: "" },
+        model: { provider: "OpenAI", name: "gpt-4o", temp: 0.3, safetyQA: true },
+        rag: { enabled: true, k: 3, kb: ["Return Policy (2025)"] },
+        updatedAt: "2025-08-26"
+      },
+      {
+        title: "Delayed Shipping",
+        subject: "Re: Shipping update",
+        body: "Hi {{customer_name}},\\n\\nWe are sorry for the delay. Your new ETA is {{eta}}.\\n\\nBest,\\nSupport",
+        status: "draft",
+        tags: ["shipping"],
+        intents: ["shipping","complaint"],
+        triggers: { keywords: "late,delay", regex: "", recipients: "" },
+        model: { provider: "OpenAI", name: "gpt-4.1-mini", temp: 0.4, safetyQA: true },
+        rag: { enabled: false, k: 2, kb: [] },
+        updatedAt: "2025-08-26"
+      }
+    ];
+    let currentTags = [];
+
+    const promptListEl = document.getElementById('promptList');
+    const addPromptBtn = document.getElementById('addPromptBtn');
+
+    // Modal refs
+    const promptModalEl = document.getElementById('promptModal');
+    const promptModal = new bootstrap.Modal(promptModalEl);
+    const promptIndexEl = document.getElementById('promptIndex');
+    const promptTitleEl = document.getElementById('promptTitle');
+    const promptSubjectEl = document.getElementById('promptSubject');
+    const promptBodyEl = document.getElementById('promptBody');
+    const promptStatusEl = document.getElementById('promptStatus');
+    const promptIntentsEl = document.getElementById('promptIntents');
+    const triggerKeywordsEl = document.getElementById('triggerKeywords');
+    const triggerRegexEl = document.getElementById('triggerRegex');
+    const triggerRecipientsEl = document.getElementById('triggerRecipients');
+    const modelProviderEl = document.getElementById('modelProvider');
+    const modelNameEl = document.getElementById('modelName');
+    const modelTempEl = document.getElementById('modelTemp');
+    const safetyQAEl = document.getElementById('safetyQA');
+    const ragEnabledEl = document.getElementById('ragEnabled');
+    const ragKEl = document.getElementById('ragK');
+
+    const tagsContainer = document.getElementById('tagsContainer');
+    const tagInput = document.getElementById('tagInput');
+    const addTagBtn = document.getElementById('addTagBtn');
+
+    const testBtn = document.getElementById('testPromptBtn');
+    const clearVarsBtn = document.getElementById('clearVarsBtn');
+    const varRowsEl = document.getElementById('varRows');
+    const previewSubjectEl = document.getElementById('previewSubject');
+    const previewBodyEl = document.getElementById('previewBody');
+
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    const saveActiveBtn = document.getElementById('saveActiveBtn');
+    const deletePromptBtn = document.getElementById('deletePromptBtn');
+
+    function renderPromptList(items = prompts) {
+      promptListEl.innerHTML = '';
+      items.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-start';
+        item.innerHTML = `
+          <div class="me-3">
+            <div class="fw-bold">${escapeHtml(p.title)}</div>
+            <div class="small text-muted">${escapeHtml(p.body.slice(0, 120))}${p.body.length > 120 ? '…' : ''}</div>
+            <div class="mt-1 d-flex flex-wrap gap-2">
+              ${p.tags.map(t => `<span class="badge bg-secondary">${escapeHtml(t)}</span>`).join('')}
+              ${p.intents.map(i => `<span class="badge bg-info text-dark">${escapeHtml(i)}</span>`).join('')}
+            </div>
+          </div>
+          <div class="text-end">
+            <div class="mb-2"><span class="badge ${p.status==='active' ? 'bg-success' : p.status==='draft' ? 'bg-warning text-dark' : 'bg-dark'}">${escapeHtml(p.status)}</span></div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-primary btn-sm edit-btn" data-index="${idx}" data-bs-toggle="modal" data-bs-target="#promptModal">Edit</button>
+              <button class="btn btn-secondary btn-sm duplicate-btn" data-index="${idx}">Duplicate</button>
+            </div>
+          </div>
+        `;
+        promptListEl.appendChild(item);
+      });
+      promptListEl.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', onEditClick));
+      promptListEl.querySelectorAll('.duplicate-btn').forEach(btn => btn.addEventListener('click', onDuplicateClick));
+    }
+
+    function onEditClick(e) {
+      const idx = +e.currentTarget.dataset.index;
+      openModalWithPrompt(idx);
+    }
+    function onDuplicateClick(e) {
+      const idx = +e.currentTarget.dataset.index;
+      const copy = JSON.parse(JSON.stringify(prompts[idx]));
+      copy.title = copy.title + ' (copy)';
+      copy.status = 'draft';
+      prompts.unshift(copy);
+      renderPromptList();
+    }
+
+    function resetModal() {
+      promptIndexEl.value = -1;
+      promptTitleEl.value = '';
+      promptSubjectEl.value = '';
+      promptBodyEl.value = '';
+      promptStatusEl.value = 'draft';
+      Array.from(promptIntentsEl.options).forEach(o => o.selected = false);
+      triggerKeywordsEl.value = '';
+      triggerRegexEl.value = '';
+      triggerRecipientsEl.value = '';
+      modelProviderEl.value = 'OpenAI';
+      modelNameEl.value = 'gpt-4o';
+      modelTempEl.value = 0.3;
+      safetyQAEl.checked = true;
+      ragEnabledEl.checked = false;
+      ragKEl.value = 3;
+      currentTags = [];
+      renderTags();
+      varRowsEl.innerHTML = `
+        <div class="col-5"><input class="form-control var-key" placeholder="variable name (e.g., customer_name)"></div>
+        <div class="col-6"><input class="form-control var-val" placeholder="value (e.g., Emily)"></div>
+        <div class="col-1 d-grid"><button type="button" class="btn btn-secondary add-var">+</button></div>
+      `;
+      attachVarAddButtons();
+      previewSubjectEl.textContent = '';
+      previewBodyEl.textContent = '';
+      deletePromptBtn.classList.add('d-none');
+      document.getElementById('promptModalLabel').textContent = 'New Prompt';
+      // sync KB list render
+      renderKbAttachListInPromptModal();
+    }
+
+    function openModalWithPrompt(idx) {
+      resetModal();
+      const p = prompts[idx];
+      promptIndexEl.value = idx;
+      promptTitleEl.value = p.title || '';
+      promptSubjectEl.value = p.subject || '';
+      promptBodyEl.value = p.body || '';
+      promptStatusEl.value = p.status || 'draft';
+      Array.from(promptIntentsEl.options).forEach(o => o.selected = (p.intents || []).includes(o.value));
+      triggerKeywordsEl.value = (p.triggers?.keywords) || '';
+      triggerRegexEl.value = (p.triggers?.regex) || '';
+      triggerRecipientsEl.value = (p.triggers?.recipients) || '';
+      modelProviderEl.value = p.model?.provider || 'OpenAI';
+      modelNameEl.value = p.model?.name || 'gpt-4o';
+      modelTempEl.value = p.model?.temp ?? 0.3;
+      safetyQAEl.checked = !!(p.model?.safetyQA);
+      ragEnabledEl.checked = !!(p.rag?.enabled);
+      ragKEl.value = p.rag?.k ?? 3;
+
+      // check KB items matching p.rag.kb
+      const kbNames = (p.rag?.kb)||[];
+      kbNames.forEach(name => {
+        const input = Array.from(document.querySelectorAll('#kbAttachList .kb-item')).find(i => i.value === name);
+        if (input) input.checked = true;
+      });
+
+      deletePromptBtn.classList.remove('d-none');
+      document.getElementById('promptModalLabel').textContent = 'Edit Prompt';
+    }
+
+    function addTag(tag) {
+      const t = (tag || '').trim();
+      if (!t) return;
+      if (!currentTags.includes(t)) currentTags.push(t);
+      renderTags();
+      tagInput.value = '';
+    }
+    function removeTag(tag) {
+      currentTags = currentTags.filter(x => x !== tag);
+      renderTags();
+    }
+    function renderTags() {
+      tagsContainer.innerHTML = currentTags.map(t =>
+        `<span class="tag-chip">${escapeHtml(t)}<span class="remove" data-tag="${escapeHtml(t)}">×</span></span>`
+      ).join(' ');
+      tagsContainer.querySelectorAll('.remove').forEach(x => {
+        x.addEventListener('click', () => removeTag(x.dataset.tag));
+      });
+    }
+
+    addTagBtn.addEventListener('click', () => addTag(tagInput.value));
+    tagInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addTag(tagInput.value);
+      }
+    });
+
+    function attachVarAddButtons() {
+      varRowsEl.querySelectorAll('.add-var').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = document.createElement('div');
+          row.className = 'row g-2 mt-1';
+          row.innerHTML = `
+            <div class="col-5"><input class="form-control var-key" placeholder="variable name"></div>
+            <div class="col-6"><input class="form-control var-val" placeholder="value"></div>
+            <div class="col-1 d-grid"><button type="button" class="btn btn-outline-dark remove-var">–</button></div>
+          `;
+          varRowsEl.appendChild(row);
+          row.querySelector('.remove-var').addEventListener('click', () => row.remove());
+        });
+      });
+    }
+    attachVarAddButtons();
+
+    function collectVars() {
+      const keys = Array.from(document.querySelectorAll('#varRows .var-key')).map(i => i.value.trim());
+      const vals = Array.from(document.querySelectorAll('#varRows .var-val')).map(i => i.value);
+      const m = {};
+      keys.forEach((k, idx) => { if (k) m[k] = vals[idx] || ''; });
+      return m;
+    }
+
+    function inject(template, vars) {
+      return template.replace(/\\{\\{\\s*([a-zA-Z0-9_]+)\\s*\\}\\}/g, (m, k) => (k in vars ? vars[k] : `{{${k}}}`));
+    }
+
+    function buildContext(selectedKB) {
+      if (!selectedKB.length) return '';
+      return '\\n\\n---\\nContext:\\n' + selectedKB.map(k => '- ' + k).join('\\n');
+    }
+
+    function testGenerate() {
+      const vars = collectVars();
+      const subj = promptSubjectEl.value || '';
+      let body = promptBodyEl.value || '';
+      const selectedKB = Array.from(document.querySelectorAll('#kbAttachList .kb-item'))
+          .filter(cb => cb.checked).map(cb => cb.value);
+      const ctx = (ragEnabledEl.checked && body.includes('{context}')) ? buildContext(selectedKB) : '';
+      body = body.replace('{context}', ctx);
+      previewSubjectEl.textContent = inject(subj, vars);
+      previewBodyEl.textContent = inject(body, vars);
+    }
+
+    testBtn.addEventListener('click', testGenerate);
+    clearVarsBtn.addEventListener('click', () => {
+      document.querySelectorAll('#varRows .var-key, #varRows .var-val').forEach(i => i.value = '');
+      previewSubjectEl.textContent = '';
+      previewBodyEl.textContent = '';
+    });
+
+    addPromptBtn.addEventListener('click', () => {
+      resetModal();
+    });
+
+    function collectFromModal() {
+      const intents = Array.from(promptIntentsEl.selectedOptions).map(o => o.value);
+      const selectedKB = Array.from(document.querySelectorAll('#kbAttachList .kb-item')).filter(cb => cb.checked).map(cb => cb.value);
+      return {
+        title: promptTitleEl.value.trim(),
+        subject: promptSubjectEl.value,
+        body: promptBodyEl.value,
+        status: promptStatusEl.value,
+        tags: currentTags.slice(),
+        intents,
+        triggers: {
+          keywords: triggerKeywordsEl.value,
+          regex: triggerRegexEl.value,
+          recipients: triggerRecipientsEl.value
+        },
+        model: {
+          provider: modelProviderEl.value,
+          name: modelNameEl.value,
+          temp: parseFloat(modelTempEl.value || '0'),
+          safetyQA: safetyQAEl.checked
+        },
+        rag: {
+          enabled: ragEnabledEl.checked,
+          k: parseInt(ragKEl.value || '3', 10),
+          kb: selectedKB
+        },
+        updatedAt: new Date().toISOString().slice(0,10)
+      };
+    }
+
+    function savePrompt(statusOverride) {
+      const data = collectFromModal();
+      if (statusOverride) data.status = statusOverride;
+      if (!data.title) {
+        alert('Title is required.');
+        return;
+      }
+      const idx = +promptIndexEl.value;
+      if (idx >= 0) {
+        prompts[idx] = data;
+      } else {
+        prompts.unshift(data);
+      }
+      renderPromptList();
+      promptModal.hide();
+    }
+
+    saveDraftBtn.addEventListener('click', () => savePrompt('draft'));
+    saveActiveBtn.addEventListener('click', () => savePrompt('active'));
+    deletePromptBtn.addEventListener('click', () => {
+      const idx = +promptIndexEl.value;
+      if (idx >= 0) {
+        if (confirm('Delete this prompt?')) {
+          prompts.splice(idx, 1);
+          renderPromptList();
+          promptModal.hide();
+        }
+      }
+    });
+
+    // Simple search binding for prompts
+    const promptSearchInput = document.querySelector('#prompt-library input[type="text"].form-control');
+    if (promptSearchInput) {
+      promptSearchInput.addEventListener('input', () => {
+        const q = promptSearchInput.value.toLowerCase();
+        const filtered = prompts.filter(p =>
+          p.title.toLowerCase().includes(q) ||
+          (p.tags.join(' ').toLowerCase().includes(q)) ||
+          (p.intents.join(' ').toLowerCase().includes(q))
+        );
+        renderPromptList(filtered);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    // Initial render
+    renderPromptList();
+  </script>
+
+  <!-- Knowledge Base JS -->
+  <script>
+    // In-memory Knowledge Base entries (demo)
+    const kbEntries = [
+      { title: 'Return Policy (2025)', type: 'doc', tags: ['policy','refund'], size: '214 KB', url: '', file: 'return_policy_2025.pdf', content: 'Returns accepted within 30 days...', updatedAt: '2025-08-20', attachedTo: [] },
+      { title: 'Shipping SOP v3', type: 'url', tags: ['shipping','sop'], size: '-', url: 'https://docs.google.com/document/d/shipping-sop', file: '', content: '', updatedAt: '2025-08-05', attachedTo: [] },
+      { title: 'Warranty Policy', type: 'note', tags: ['warranty','policy'], size: '-', url: '', file: '', content: '1-year manufacturer warranty...', updatedAt: '2025-07-15', attachedTo: [] },
+      { title: 'FAQ – Returns CSV', type: 'doc', tags: ['faq','refund'], size: '32 KB', url: '', file: 'faq_returns.csv', content: 'Q/A pairs...', updatedAt: '2025-06-10', attachedTo: [] }
+    ];
+
+    // Elements
+    const kbTableBody = document.getElementById('kbTableBody');
+    const kbSearch = document.getElementById('kbSearch');
+    const kbTypeFilter = document.getElementById('kbTypeFilter');
+    const kbTagFilter = document.getElementById('kbTagFilter');
+    const clearKbFilters = document.getElementById('clearKbFilters');
+
+    // KB Modal elements
+    const kbEntryModalEl = document.getElementById('kbEntryModal');
+    const kbEntryModal = new bootstrap.Modal(kbEntryModalEl);
+    const kbIndexEl = document.getElementById('kbIndex');
+    const kbTitleEl = document.getElementById('kbTitle');
+    const kbTypeEl = document.getElementById('kbType');
+    const kbUrlGroup = document.getElementById('kbUrlGroup');
+    const kbUploadGroup = document.getElementById('kbUploadGroup');
+    const kbUrlEl = document.getElementById('kbUrl');
+    const kbFileEl = document.getElementById('kbFile');
+    const kbContentEl = document.getElementById('kbContent');
+    const kbVersionEl = document.getElementById('kbVersion');
+    const kbTagsContainer = document.getElementById('kbTagsContainer');
+    const kbTagInput = document.getElementById('kbTagInput');
+    const kbAddTagBtn = document.getElementById('kbAddTagBtn');
+    const kbMetaEl = document.getElementById('kbMeta');
+    const kbSaveBtn = document.getElementById('kbSaveBtn');
+    const kbDeleteBtn = document.getElementById('kbDeleteBtn');
+
+    const kbAttachModalEl = document.getElementById('kbAttachModal');
+    const kbAttachModal = new bootstrap.Modal(kbAttachModalEl);
+    const kbAttachPromptList = document.getElementById('kbAttachPromptList');
+    const kbAttachSaveBtn = document.getElementById('kbAttachSaveBtn');
+
+    const kbAttachList = document.getElementById('kbAttachList');
+
+    let kbCurrentTags = [];
+    let kbAttachIndex = -1;
+
+    function renderKbTable() {
+      const q = (kbSearch.value || '').toLowerCase();
+      const type = kbTypeFilter.value;
+      const tag = (kbTagFilter.value || '').toLowerCase();
+      kbTableBody.innerHTML = '';
+      kbEntries
+        .filter(e => (!type || e.type === type))
+        .filter(e => (!tag || e.tags.some(t => t.toLowerCase().includes(tag))))
+        .filter(e => (e.title.toLowerCase().includes(q) || e.tags.join(' ').toLowerCase().includes(q) || (e.content||'').toLowerCase().includes(q)))
+        .forEach((e, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div class="fw-semibold">${escapeHtml(e.title)}</div>
+              <div class="small text-muted">${e.file ? escapeHtml(e.file) : (e.url ? escapeHtml(e.url) : '—')}</div>
+            </td>
+            <td><span class="badge bg-secondary">${e.type}</span></td>
+            <td>${e.tags.map(t => `<span class='badge bg-info text-dark me-1 mb-1'>${escapeHtml(t)}</span>`).join('')}</td>
+            <td>${e.attachedTo.length} prompt${e.attachedTo.length===1?'':'s'}</td>
+            <td class="small text-muted">${e.updatedAt}</td>
+            <td class="text-end">
+              <div class="btn-group">
+                <button class="btn btn-outline-dark btn-sm" data-action="view" data-index="${idx}">View</button>
+                <button class="btn btn-outline-primary btn-sm" data-action="attach" data-index="${idx}">Attach</button>
+                <button class="btn btn-secondary btn-sm" data-action="edit" data-index="${idx}">Edit</button>
+                <button class="btn btn-outline-dark btn-sm" data-action="delete" data-index="${idx}">Delete</button>
+              </div>
+            </td>`;
+          kbTableBody.appendChild(tr);
+        });
+      kbTableBody.querySelectorAll('button[data-action]').forEach(btn => {
+        const idx = +btn.dataset.index;
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          if (action === 'view') return alertPreviewKb(idx);
+          if (action === 'edit') return openKbModal(idx);
+          if (action === 'delete') return deleteKb(idx);
+          if (action === 'attach') return openAttachModal(idx);
+        });
+      });
+    }
+
+    function alertPreviewKb(idx) {
+      const e = kbEntries[idx];
+      const meta = e.file ? `File: ${e.file}` : (e.url ? `URL: ${e.url}` : 'Note');
+      alert(`${e.title}\n${meta}\n\n${(e.content||'').slice(0,400)}${(e.content||'').length>400?'…':''}`);
+    }
+
+    function openKbModal(idx) {
+      resetKbModal();
+      if (idx !== undefined && idx >= 0) {
+        const e = kbEntries[idx];
+        document.getElementById('kbEntryModalLabel').textContent = 'Edit Knowledge Entry';
+        kbIndexEl.value = idx;
+        kbTitleEl.value = e.title;
+        kbTypeEl.value = e.type;
+        kbUrlEl.value = e.url || '';
+        kbContentEl.value = e.content || '';
+        kbVersionEl.value = '';
+        kbCurrentTags = e.tags.slice();
+        renderKbTags();
+        kbMetaEl.textContent = e.file ? `File: ${e.file} (${e.size||''})` : (e.url ? `URL: ${e.url}` : 'Note');
+        toggleKbTypeFields();
+        kbDeleteBtn.classList.remove('d-none');
+      } else {
+        document.getElementById('kbEntryModalLabel').textContent = 'New Knowledge Entry';
+      }
+      kbEntryModal.show();
+    }
+
+    function resetKbModal() {
+      kbIndexEl.value = -1;
+      kbTitleEl.value = '';
+      kbTypeEl.value = 'doc';
+      kbUrlEl.value = '';
+      kbFileEl.value = '';
+      kbContentEl.value = '';
+      kbVersionEl.value = '';
+      kbCurrentTags = [];
+      renderKbTags();
+      kbMetaEl.textContent = 'No file selected.';
+      kbDeleteBtn.classList.add('d-none');
+      toggleKbTypeFields();
+    }
+
+    function toggleKbTypeFields() {
+      const t = kbTypeEl.value;
+      kbUrlGroup.style.display = (t === 'url') ? '' : 'none';
+      kbUploadGroup.style.display = (t === 'doc') ? '' : 'none';
+    }
+    kbTypeEl.addEventListener('change', toggleKbTypeFields);
+    kbFileEl.addEventListener('change', () => {
+      const f = kbFileEl.files[0];
+      kbMetaEl.textContent = f ? `File: ${f.name} (${Math.round(f.size/1024)} KB)` : 'No file selected.';
+    });
+
+    kbAddTagBtn.addEventListener('click', () => addKbTag(kbTagInput.value));
+    kbTagInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addKbTag(kbTagInput.value); }
+    });
+    function addKbTag(t) { t = (t||'').trim(); if (!t) return; if (!kbCurrentTags.includes(t)) kbCurrentTags.push(t); kbTagInput.value=''; renderKbTags(); }
+    function removeKbTag(t) { kbCurrentTags = kbCurrentTags.filter(x => x!==t); renderKbTags(); }
+    function renderKbTags() {
+      kbTagsContainer.innerHTML = kbCurrentTags.map(t => `<span class="tag-chip">${escapeHtml(t)}<span class="remove" data-tag="${escapeHtml(t)}">×</span></span>`).join(' ');
+      kbTagsContainer.querySelectorAll('.remove').forEach(x => x.addEventListener('click', () => removeKbTag(x.dataset.tag)));
+    }
+
+    kbSaveBtn.addEventListener('click', () => {
+      const data = {
+        title: kbTitleEl.value.trim(),
+        type: kbTypeEl.value,
+        tags: kbCurrentTags.slice(),
+        size: '',
+        url: kbUrlEl.value.trim(),
+        file: (kbFileEl.files[0]?.name) || '',
+        content: kbContentEl.value,
+        updatedAt: new Date().toISOString().slice(0,10),
+        attachedTo: []
+      };
+      if (!data.title) return alert('Title is required.');
+      const idx = +kbIndexEl.value;
+      if (idx>=0) {
+        data.attachedTo = kbEntries[idx].attachedTo || [];
+        kbEntries[idx] = data;
+      } else {
+        kbEntries.unshift(data);
+      }
+      renderKbTable();
+      renderKbAttachListInPromptModal();
+      kbEntryModal.hide();
+    });
+
+    function deleteKb(idx) {
+      if (!confirm('Delete this knowledge entry?')) return;
+      kbEntries.splice(idx,1);
+      renderKbTable();
+      renderKbAttachListInPromptModal();
+    }
+
+    function openAttachModal(idx) {
+      kbAttachIndex = idx;
+      kbAttachPromptList.innerHTML = prompts.map((p,i) => {
+        const checked = (kbEntries[idx].attachedTo || []).includes(i) ? 'checked' : '';
+        return `<div class='form-check mb-1'>
+          <input class='form-check-input kb-attach-prompt' type='checkbox' data-prompt-index='${i}' id='kbAttach_${idx}_${i}' ${checked}>
+          <label class='form-check-label' for='kbAttach_${idx}_${i}'>${escapeHtml(p.title)} <span class='badge ${p.status==='active'?'bg-success':p.status==='draft'?'bg-warning text-dark':'bg-dark'} ms-1'>${p.status}</span></label>
+        </div>`;
+      }).join('');
+      kbAttachModal.show();
+    }
+
+    kbAttachSaveBtn.addEventListener('click', () => {
+      if (kbAttachIndex<0) return;
+      const checks = Array.from(kbAttachPromptList.querySelectorAll('.kb-attach-prompt'));
+      kbEntries[kbAttachIndex].attachedTo = checks.filter(c => c.checked).map(c => +c.dataset.promptIndex);
+      renderKbTable();
+      renderKbAttachListInPromptModal();
+      kbAttachModal.hide();
+    });
+
+    [kbSearch, kbTypeFilter, kbTagFilter].forEach(el => el.addEventListener('input', renderKbTable));
+    clearKbFilters.addEventListener('click', () => { kbSearch.value=''; kbTypeFilter.value=''; kbTagFilter.value=''; renderKbTable(); });
+
+    function renderKbAttachListInPromptModal() {
+      if (!kbAttachList) return;
+      kbAttachList.innerHTML = kbEntries.map((e, idx) => {
+        return `<div class='form-check'>
+          <input class='form-check-input kb-item' type='checkbox' value='${escapeHtml(e.title)}' id='kb_item_${idx}'>
+          <label class='form-check-label' for='kb_item_${idx}'>${escapeHtml(e.title)} <span class='badge bg-secondary ms-1'>${e.type}</span></label>
+        </div>`;
+      }).join('');
+    }
+
+    // Initial render
+    renderKbTable();
+    renderKbAttachListInPromptModal();
+  </script>
+</body>
+</html>

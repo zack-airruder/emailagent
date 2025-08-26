@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Inbox Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      font-family: 'Inter', sans-serif !important;
+      background: #f2f5fa;
+    }
+    .inbox-list-item.active {
+      background: #f7f9fc;
+    }
+    .conversation-scrollbox {
+      height: 50vh;
+      max-height: 50vh;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    .thread-messages {
+      margin-bottom: 1rem;
+    }
+    .email-message {
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    .email-message.agent .message-box {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      background: #f7f9fc;
+      border: 1px solid #e0e7ef;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .email-message.customer .message-box {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      border: 1px solid #e0e7ef;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .email-message .message-box p.email-body {
+      margin-bottom: 0.5rem;
+      white-space: pre-wrap;
+    }
+    .email-header {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .email-meta {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-bottom: 0.5rem;
+    }
+    .sender-role {
+      font-style: italic;
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+    .message-footer {
+      font-size: 0.75rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+    .reply-status-chip {
+      font-size: 0.85rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 2rem;
+      background: #fde68a;
+      color: #92400e;
+      display: inline-block;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
+    .qa-indicator {
+      font-size: 0.95rem;
+    }
+    .qa-indicator .badge {
+      margin-right: 0.5rem;
+    }
+    @media (max-width: 991.98px) {
+      .thread-header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .email-message {
+        max-width: 100%;
+      }
+    }
+    .inbox-feed-item {
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+    .inbox-feed-item:hover {
+      background-color: #f2f5fa;
+    }
+    .avatar-circle {
+      width: 48px;
+      height: 48px;
+      background-color: #e0e7ef;
+      color: #3b82f6;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select: none;
+      flex-shrink: 0;
+      border: none;
+      box-shadow: none;
+    }
+    .email-message.agent {
+      margin-left: auto;
+    }
+    .email-message.customer {
+      margin-right: auto;
+    }
+    /* BADGE pill redesign */
+    .badge,
+    .list-group-item .badge,
+    .qa-indicator .badge,
+    .reply-status-chip,
+    .inbox-feed-item .badge {
+      border-radius: 2rem !important;
+      font-weight: 600 !important;
+      font-size: 0.75rem !important;
+      padding: 0.4rem 0.9rem !important;
+    }
+    /* Custom badge colors for QA summary */
+    .badge-qa-tone {
+      background: #22c55e !important;
+      color: #fff !important;
+    }
+    .badge-qa-compliance {
+      background: #3b82f6 !important;
+      color: #fff !important;
+    }
+    .badge-qa-flagged {
+      background: #ef4444 !important;
+      color: #fff !important;
+    }
+    /* Card/Panel backgrounds */
+    .card {
+      background: #f7f9fc !important;
+      border: none;
+      border-radius: 1rem !important;
+    }
+    /* Sidebar/Inbox list shadow and rounded */
+    .card.h-100.shadow-sm {
+      box-shadow: 0 0 10px rgba(0,0,0,0.04) !important;
+      border-radius: 1rem !important;
+    }
+    /* Remove hard dividers in sidebar */
+    .list-group-item {
+      border: none !important;
+      background: #fff !important;
+      border-radius: 0.75rem !important;
+      margin-bottom: 0.3rem;
+      font-size: 0.97rem;
+    }
+    .list-group-item-action:active, .list-group-item-action:focus, .list-group-item-action:hover {
+      background: #f2f5fa !important;
+      color: #111827 !important;
+    }
+    /* Remove divider for dropdown */
+    .dropdown-divider {
+      margin: 0.3rem 0;
+      border-color: #f2f5fa;
+    }
+    /* Navbar theming */
+    .navbar {
+      background: #3b82f6 !important;
+      color: #fff;
+    }
+    .navbar .navbar-brand,
+    .navbar .nav-link,
+    .navbar .navbar-text {
+      color: #fff !important;
+      font-weight: 600;
+    }
+    .navbar .dropdown-menu {
+      background: #fff;
+      color: #22223b;
+      border-radius: 0.6rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+      margin-top: 0.5rem !important;
+      font-family: 'Inter', sans-serif;
+    }
+    .navbar .dropdown-item {
+      color: #22223b !important;
+    }
+    .navbar .dropdown-item:active, .navbar .dropdown-item:focus {
+      background: #f2f5fa !important;
+      color: #3b82f6 !important;
+    }
+    .navbar-toggler {
+      border-color: #fff !important;
+    }
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255,255,255,1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+    /* Main background */
+    body {
+      background: #f2f5fa !important;
+    }
+    /* Panel/card background */
+    .bg-light, .bg-white {
+      background: #f7f9fc !important;
+    }
+    /* Remove default Bootstrap card border */
+    .card {
+      border: none !important;
+    }
+    /* Action Buttons modern style */
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      border-radius: 2rem;
+      padding: 0.45rem 1.1rem;
+      font-size: 1rem;
+      border: none;
+      box-shadow: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-primary {
+      background: #3b82f6 !important;
+      color: #fff !important;
+    }
+    .btn-secondary {
+      background: #e5ecfb !important;
+      color: #3b82f6 !important;
+    }
+    .btn-success {
+      background: #22c55e !important;
+      color: #fff !important;
+    }
+    .btn-info {
+      background: #def7ec !important;
+      color: #2563eb !important;
+    }
+    .btn-warning {
+      background: #fde68a !important;
+      color: #b45309 !important;
+    }
+    .btn-dark {
+      background: #e5e7eb !important;
+      color: #22223b !important;
+    }
+    .btn-outline-primary, .btn-outline-secondary, .btn-outline-info, .btn-outline-dark {
+      background: #e5ecfb !important;
+      color: #3b82f6 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .btn-outline-secondary {
+      background: #e5ecfb !important;
+      color: #3b82f6 !important;
+    }
+    .btn-outline-info {
+      background: #def7ec !important;
+      color: #2563eb !important;
+    }
+    .btn-outline-dark {
+      background: #e5e7eb !important;
+      color: #22223b !important;
+    }
+    .btn-outline-primary {
+      background: #e5ecfb !important;
+      color: #3b82f6 !important;
+    }
+    .btn-success {
+      background: #22c55e !important;
+      color: #fff !important;
+    }
+    /* Remove default button focus ring for cleaner look */
+    .btn:focus, .btn:active {
+      outline: none !important;
+      box-shadow: 0 0 0 2px #3b82f633 !important;
+    }
+    /* Compact spacing for inbox items and thread */
+    .inbox-feed-item {
+      margin-bottom: 0.4rem !important;
+      padding: 0.85rem 1rem !important;
+    }
+    .card-title, .card h5, h5, h6 {
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+    .card-body {
+      padding: 1.3rem 1.5rem;
+    }
+    /* Input, select tweaks */
+    .form-control, .form-select {
+      border-radius: 1.6rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Remove Bootstrap default badge font weight */
+    .badge {
+      font-weight: 600 !important;
+    }
+    /* Remove hard divider between sidebar sections */
+    .card .list-group {
+      border: none !important;
+    }
+    /* Remove extra shadows from card */
+    .card {
+      box-shadow: 0 0 10px rgba(0,0,0,0.04) !important;
+    }
+    /* Remove margin between sidebar section headers and lists for compactness */
+    .card-body > h6 {
+      margin-bottom: 0.25rem !important;
+      margin-top: 0.8rem !important;
+    }
+    /* Modal font */
+    .modal-content {
+      font-family: 'Inter', sans-serif;
+      border-radius: 1rem;
+    }
+    /* Compact modal header/footer */
+    .modal-header, .modal-footer {
+      padding: 1rem 1.5rem;
+    }
+    /* Adjust spacing for thread-header */
+    .thread-header {
+      gap: 0.5rem;
+    }
+    /* Remove Bootstrap's default background for .bg-light */
+    .bg-light {
+      background: #f2f5fa !important;
+    }
+    /* Custom scrollbar for scrollbox */
+    .conversation-scrollbox::-webkit-scrollbar {
+      width: 8px;
+      background: #e0e7ef;
+      border-radius: 8px;
+    }
+    .conversation-scrollbox::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+  </style>
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg mb-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Email Agent</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUserSettings" aria-controls="navbarUserSettings" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarUserSettings">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userSettingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              User / Settings
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettingsDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid py-3">
+    <div class="row">
+      <!-- Left Column: Inbox List -->
+      <div class="col-lg-4 col-md-5 mb-4 mb-md-0">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-3">Inbox</h5>
+            <form class="mb-3">
+              <div class="input-group mb-2">
+                <input type="text" class="form-control" placeholder="Search inboxes...">
+                <button class="btn btn-outline-secondary" type="button">
+                  <span class="bi bi-search"></span>
+                </button>
+              </div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <select class="form-select" aria-label="Filter by tag">
+                    <option selected>All Tags</option>
+                    <option>Important</option>
+                    <option>Follow Up</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <select class="form-select" aria-label="Filter by status">
+                    <option selected>All Statuses</option>
+                    <option>AI Replied</option>
+                    <option>Scheduled</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="overflow-auto flex-grow-1 mb-4" style="max-height: 400px;">
+              <div class="d-flex align-items-center inbox-feed-item active">
+                <div class="avatar-circle me-3">JS</div>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">John Smith</div>
+                  <div class="small text-muted fw-semibold">Re: Meeting Follow Up</div>
+                  <div class="small text-muted text-truncate" style="max-width: 220px;">Are you available next week to discuss the project?</div>
+                </div>
+                <span class="badge bg-warning text-dark ms-3 align-self-start">AI Generate – Not Sent</span>
+              </div>
+              <div class="d-flex align-items-center inbox-feed-item">
+                <div class="avatar-circle me-3">JD</div>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">Jane Doe</div>
+                  <div class="small text-muted fw-semibold">Project Update</div>
+                  <div class="small text-muted text-truncate" style="max-width: 220px;">Here's the latest update on the project timeline.</div>
+                </div>
+                <span class="badge bg-info text-dark ms-3 align-self-start">Scheduled</span>
+              </div>
+              <div class="d-flex align-items-center inbox-feed-item">
+                <div class="avatar-circle me-3">AC</div>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">Acme Corp</div>
+                  <div class="small text-muted fw-semibold">Quarterly Report</div>
+                  <div class="small text-muted text-truncate" style="max-width: 220px;">Please review the attached quarterly financial report.</div>
+                </div>
+                <span class="badge bg-success ms-3 align-self-start">Sent</span>
+              </div>
+              <div class="d-flex align-items-center inbox-feed-item">
+                <div class="avatar-circle me-3">ST</div>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">Support Team</div>
+                  <div class="small text-muted fw-semibold">Ticket Follow Up</div>
+                  <div class="small text-muted text-truncate" style="max-width: 220px;">Following up on your support request.</div>
+                </div>
+                <span class="badge bg-secondary ms-3 align-self-start">Draft</span>
+              </div>
+            </div>
+            <h6 class="mb-2">Reply Batches – AI Agent Generated</h6>
+            <div class="list-group mb-4">
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Batch #183 – Refunds
+                <span class="badge bg-danger">3 replies pending QA</span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Batch #184 – Order Confirmations
+                <span class="badge bg-warning text-dark">2 queued for delivery</span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Batch #185 – Shipping Issues
+                <span class="badge bg-info text-dark">1 scheduled</span>
+              </a>
+            </div>
+            <h6 class="mb-2">Agent Replied</h6>
+            <div class="list-group">
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                  <div><strong>John Smith</strong></div>
+                  <div class="small text-truncate" style="max-width: 180px;">Re: Meeting Follow Up</div>
+                </div>
+                <span class="badge bg-warning text-dark align-self-center">AI Replied</span>
+              </a>
+               <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                  <div><strong>Emily Chia</strong></div>
+                  <div class="small text-truncate" style="max-width: 180px;">Re: Complain Product Defect</div>
+                </div>
+                <span class="badge bg-danger text-white align-self-center">Human Agent Replied</span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                  <div><strong>Jane Doe</strong></div>
+                  <div class="small text-truncate" style="max-width: 180px;">Project Update</div>
+                </div>
+                <span class="badge bg-info text-dark align-self-center">Scheduled</span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                  <div><strong>Acme Corp</strong></div>
+                  <div class="small text-truncate" style="max-width: 180px;">Quarterly Report</div>
+                </div>
+                <span class="badge bg-success align-self-center">Sent</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right Column: Email Thread Viewer -->
+      <div class="col-lg-8 col-md-7">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
+            <!-- Thread Header -->
+            <div class="thread-header d-flex justify-content-between align-items-center mb-3 flex-wrap">
+              <div>
+                <h5 class="mb-1">Re: Product Return Policy Inquiry</h5>
+                <div class="text-muted small">From: Emily Carter &lt;emily.carter@email.com&gt; | 2024-06-14 09:12 AM</div>
+              </div>
+              <div>
+                <span class="reply-status-chip">Human Agent Takeover</span>
+              </div>
+            </div>
+            <!-- QA Summary Box -->
+            <div class="card mb-3 mt-0 mb-4">
+              <div class="card-body">
+                <h6 class="card-title mb-2">QA Summary</h6>
+                <div class="qa-indicator mb-2">
+                  <span class="badge badge-qa-tone">Tone: Professional</span>
+                  <span class="badge badge-qa-compliance">Compliance: Pass</span>
+                  <span class="badge badge-qa-flagged">Flagged: "ASAP"</span>
+                </div>
+                <div class="small text-muted">No critical issues detected.</div>
+              </div>
+            </div>
+            <!-- Thread Messages (scrollable) -->
+            <div class="conversation-scrollbox mb-3">
+              <div class="thread-messages">
+                <div class="email-message customer d-flex justify-content-start flex-column align-items-start">
+                  <div class="message-box">
+                    <div class="email-header">From: Emily Carter</div>
+                    <div class="email-meta">Sent: 2024-06-14 09:12 AM</div>
+                    <div class="email-header">To: Support Team &lt;support@shopnow.com&gt;</div>
+                    <div class="email-header">Subject: Product Return Policy</div>
+                    <p class="email-body">Hello,
+<br>
+I recently purchased a jacket from your store, but it doesn't fit as expected. Could you please let me know what your return policy is and how I can initiate a return?
+<br>
+Thank you,
+<br>
+Emily
+                    </p>
+                  </div>
+                  <div class="sender-role">Customer</div>
+                  <div class="message-footer">Received</div>
+                </div>
+                <div class="email-message agent d-flex justify-content-end flex-column align-items-end">
+                  <div class="message-box">
+                    <div class="email-header">From: ShopNow AI Assistant</div>
+                    <div class="email-meta">Sent: 2024-06-14 09:14 AM</div>
+                    <div class="email-header">To: Emily Carter &lt;emily.carter@email.com&gt;</div>
+                    <div class="email-header">Subject: Re: Product Return Policy</div>
+                    <p class="email-body">Hello Emily,
+<br>
+Thank you for reaching out regarding your recent purchase.
+<br><br>
+Our return policy allows for returns within 30 days of delivery, provided the item is in its original condition with tags attached. To initiate a return, please reply to this email with your order number, and we will send you a prepaid return shipping label and further instructions.
+<br><br>
+If you have any other questions, feel free to ask!
+<br><br>
+Best regards,<br>
+ShopNow Customer Support
+                    </p>
+                  </div>
+                  <div class="sender-role">AI</div>
+                  <div class="message-footer">Sent via Email Agent · Generated by Email Agent AI</div>
+                </div>
+                <div class="email-message customer d-flex justify-content-start flex-column align-items-start">
+                  <div class="message-box">
+                    <div class="email-header">From: Emily Carter</div>
+                    <div class="email-meta">Sent: 2024-06-14 09:15 AM</div>
+                    <div class="email-header">To: ShopNow AI Assistant</div>
+                    <div class="email-header">Subject: Re: Product Return Policy</div>
+                    <p class="email-body">Hi,  
+Thank you for the details. My order number is <strong>#A123456</strong>.  
+Looking forward to your instructions.</p>
+                  </div>
+                  <div class="sender-role">Customer</div>
+                  <div class="message-footer">Received</div>
+                </div>
+                <div class="email-message agent d-flex justify-content-end flex-column align-items-end">
+                  <div class="message-box">
+                    <div class="email-header">From: Sarah Lee</div>
+                    <div class="email-meta">Sent: 2024-06-14 09:17 AM</div>
+                    <div class="email-header">To: Emily Carter &lt;emily.carter@email.com&gt;</div>
+                    <div class="email-header">Subject: Re: Return Request Confirmation</div>
+                    <p class="email-body">Hi Emily,
+<br>
+Thank you for confirming your order number. I have just emailed you a prepaid return shipping label and instructions for sending the jacket back to us. Once we receive and inspect the item, we will process your refund within 2-3 business days.
+<br><br>
+Please let us know if you need any further assistance.
+<br><br>
+Best,<br>
+Sarah Lee<br>
+ShopNow Customer Support
+                    </p>
+                  </div>
+                  <div class="sender-role">Agent</div>
+                  <div class="message-footer">Sent via Email Agent · Human Agent</div>
+                </div>
+              </div>
+            </div>
+            <!-- Show AI Reply Modal Button -->
+            <div class="d-flex justify-content-end mb-3">
+              <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#aiReplyModal">
+                View AI Suggested Reply
+              </button>
+            </div>
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <button type="button" class="btn btn-secondary">Archive</button>
+              <button type="button" class="btn btn-primary" style="background: #e5ecfb; color: #3b82f6;">Edit Prompt</button>
+              <button type="button" class="btn btn-info">Schedule</button>
+              <button type="button" class="btn btn-success">Send</button>
+            </div>
+            <!-- Reply as Human Agent Button -->
+            <div class="d-flex">
+              <button type="button" class="btn btn-dark ms-auto" data-bs-toggle="modal" data-bs-target="#humanReplyModal">
+                Reply as Human Agent
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- Human Agent Reply Modal -->
+<div class="modal fade" id="humanReplyModal" tabindex="-1" aria-labelledby="humanReplyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="humanReplyModalLabel">Reply as Human Agent</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="humanReplyTextarea" class="form-label">Your Reply</label>
+          <textarea class="form-control" id="humanReplyTextarea" rows="7" placeholder="Type your reply here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Send Reply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Reply Modal -->
+<div class="modal fade" id="aiReplyModal" tabindex="-1" aria-labelledby="aiReplyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="aiReplyModalLabel">Suggested AI Reply</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="small text-muted mb-1">Prompt Used (2024-06-14 09:13 AM):</div>
+        <div class="bg-light rounded p-2 small mb-2">
+          "Draft a courteous reply explaining the return policy and next steps for a customer wishing to return an item."
+        </div>
+        <div class="small mb-2"><strong>Template:</strong> Product Return Policy Response</div>
+        <div class="bg-white rounded border p-3 mb-3" style="font-size: 0.95rem;">
+          <strong>Suggested Reply (AI-Generated):</strong>
+          <div class="mt-2" style="white-space: pre-wrap;">
+            Hello Emily,
+
+            Thank you for reaching out regarding your recent purchase.
+
+            Our return policy allows for returns within 30 days of delivery, provided the item is in its original condition with tags attached. To initiate a return, please reply to this email with your order number, and we will send you a prepaid return shipping label and further instructions.
+
+            If you have any other questions, feel free to ask!
+
+            Best regards,  
+            ShopNow Customer Support
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-outline-secondary">Regenerate</button>
+          <button type="button" class="btn btn-outline-primary">Edit Prompt</button>
+          <button type="button" class="btn btn-success">Accept & Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle (with Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Icons CDN (for search icon) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</body>
+</html>
