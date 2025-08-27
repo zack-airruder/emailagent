@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management - Email Agent</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <div class="ea-layout">
+    <!-- Sidebar -->
+    <div class="ea-sidebar">
+      <div class="ea-sidebar-header">
+        <div class="ea-sidebar-brand">
+          <i class="bi bi-envelope-paper-fill me-2"></i>
+          <span>Email Agent</span>
+        </div>
+        <button class="ea-sidebar-close d-lg-none">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="ea-sidebar-menu">
+        <a href="index.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+            <span>Dashboard</span>
+          </div>
+        </a>
+        <a href="inbox.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-inbox ea-sidebar-icon"></i>
+            <span>Inbox</span>
+          </div>
+        </a>
+        <a href="automation.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-robot ea-sidebar-icon"></i>
+            <span>Automation</span>
+          </div>
+        </a>
+        <a href="task.html" class="ea-sidebar-item active">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-check2-square ea-sidebar-icon"></i>
+            <span>Tasks</span>
+          </div>
+        </a>
+        <a href="flowconnect.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+            <span>Flow Connect</span>
+          </div>
+        </a>
+        <div class="ea-sidebar-divider"></div>
+        <div class="ea-sidebar-header-sm">AI Tools</div>
+        <a href="promptlib.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-collection ea-sidebar-icon"></i>
+            <span>Prompt Library</span>
+          </div>
+        </a>
+        <a href="kbrules.html" class="ea-sidebar-item">
+          <div class="ea-sidebar-link">
+            <i class="bi bi-shield-check ea-sidebar-icon"></i>
+            <span>Guardrails</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ea-main">
+      <!-- Top Navigation -->
+      <header class="ea-header">
+        <div class="ea-header-left">
+          <button id="sidebarToggle" class="ea-sidebar-toggle d-lg-none">
+            <i class="bi bi-list"></i>
+          </button>
+          <div class="ea-breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span>Tasks</span>
+          </div>
+        </div>
+        <div class="ea-header-right">
+          <div class="ea-user-dropdown dropdown">
+            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <img src="https://ui-avatars.com/api/?name=Alex+Smith&background=0D8ABC&color=fff" alt="User" class="ea-avatar">
+              <span class="d-none d-sm-inline">Alex Smith</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="ea-content">
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col">
+              <h2 class="mb-0">Task Management</h2>
+              <p class="text-muted">Track and manage email-related tasks</p>
+            </div>
+            <div class="col-auto">
+              <a href="inbox.html" class="ea-btn ea-btn-outline-secondary me-2">
+                <i class="bi bi-envelope me-1"></i> Inbox
+              </a>
+              <a href="flowconnect.html" class="ea-btn ea-btn-outline-secondary me-2">
+                <i class="bi bi-diagram-3 me-1"></i> Workflows
+              </a>
+              <button class="ea-btn ea-btn-primary" id="newTaskBtn">
+                <i class="bi bi-plus-lg me-2"></i>New Task
+              </button>
+            </div>
+          </div>
+
+          <!-- Task Filters -->
+          <div class="ea-card mb-4">
+            <div class="ea-card-body">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" id="statusFilter">
+                    <option value="all">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="review">Review</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Priority</label>
+                  <select class="form-select" id="priorityFilter">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Assigned To</label>
+                  <select class="form-select" id="assigneeFilter">
+                    <option value="all">All Team Members</option>
+                    <option value="me">Assigned to Me</option>
+                    <option value="unassigned">Unassigned</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task List -->
+          <div class="ea-card">
+            <div class="ea-card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;"><input type="checkbox" class="form-check-input" id="selectAll"></th>
+                      <th>Task</th>
+                      <th>Related To</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Due Date</th>
+                      <th>Assigned To</th>
+                      <th style="width: 100px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="taskList">
+                    <!-- Tasks will be populated here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel">New Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="taskForm">
+            <div class="mb-3">
+              <label class="form-label">Task Title</label>
+              <input type="text" class="form-control" id="taskTitle" required>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Related To</label>
+                <select class="form-select" id="taskRelatedTo">
+                  <option value="">None</option>
+                  <option value="email">Email</option>
+                  <option value="automation">Automation</option>
+                  <option value="workflow">Workflow</option>
+                </select>
+              </div>
+              <div class="col-md-6" id="relatedItemContainer" style="display: none;">
+                <label class="form-label">Select Item</label>
+                <select class="form-select" id="relatedItem"></select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="taskPriority">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="taskDueDate">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Assigned To</label>
+              <select class="form-select" id="taskAssignee">
+                <option value="">Unassigned</option>
+                <option value="alex">Alex Smith</option>
+                <option value="jamie">Jamie Lee</option>
+                <option value="taylor">Taylor Wong</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" id="taskDescription" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ea-btn ea-btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="ea-btn ea-btn-primary" id="saveTaskBtn">Save Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.querySelector('.ea-sidebar');
+      const sidebarClose = document.querySelector('.ea-sidebar-close');
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('ea-sidebar-mobile-open');
+        });
+      }
+      
+      if (sidebarClose) {
+        sidebarClose.addEventListener('click', function() {
+          sidebar.classList.remove('ea-sidebar-mobile-open');
+        });
+      }
+      
+      // Sample tasks data
+      const tasks = [
+        {
+          id: 1,
+          title: "Follow up with customer about refund request",
+          relatedTo: "email",
+          relatedItem: "RE: Order #12345 Refund",
+          priority: "high",
+          status: "open",
+          dueDate: "2023-07-15",
+          assignee: "alex"
+        },
+        {
+          id: 2,
+          title: "Update auto-reply template for support tickets",
+          relatedTo: "automation",
+          relatedItem: "Support Ticket Auto-Reply",
+          priority: "medium",
+          status: "in-progress",
+          dueDate: "2023-07-18",
+          assignee: "jamie"
+        },
+        {
+          id: 3,
+          title: "Review new workflow for order processing",
+          relatedTo: "workflow",
+          relatedItem: "Order Processing Flow",
+          priority: "medium",
+          status: "review",
+          dueDate: "2023-07-20",
+          assignee: "taylor"
+        },
+        {
+          id: 4,
+          title: "Create documentation for email templates",
+          relatedTo: "",
+          relatedItem: "",
+          priority: "low",
+          status: "open",
+          dueDate: "2023-07-25",
+          assignee: ""
+        },
+        {
+          id: 5,
+          title: "Implement new guardrails for sensitive information",
+          relatedTo: "automation",
+          relatedItem: "PII Detection",
+          priority: "high",
+          status: "completed",
+          dueDate: "2023-07-10",
+          assignee: "alex"
+        }
+      ];
+      
+      // Render tasks
+      function renderTasks(taskList = tasks) {
+        const taskListEl = document.getElementById('taskList');
+        taskListEl.innerHTML = '';
+        
+        taskList.forEach(task => {
+          const row = document.createElement('tr');
+          
+          // Status badge class
+          let statusClass = '';
+          switch(task.status) {
+            case 'open': statusClass = 'ea-badge-primary'; break;
+            case 'in-progress': statusClass = 'ea-badge-warning'; break;
+            case 'review': statusClass = 'ea-badge-info'; break;
+            case 'completed': statusClass = 'ea-badge-success'; break;
+          }
+          
+          // Priority badge class
+          let priorityClass = '';
+          switch(task.priority) {
+            case 'high': priorityClass = 'ea-badge-danger'; break;
+            case 'medium': priorityClass = 'ea-badge-warning'; break;
+            case 'low': priorityClass = 'ea-badge-secondary'; break;
+          }
+          
+          // Assignee name
+          let assigneeName = 'Unassigned';
+          let assigneeInitials = '--';
+          switch(task.assignee) {
+            case 'alex': 
+              assigneeName = 'Alex Smith';
+              assigneeInitials = 'AS';
+              break;
+            case 'jamie': 
+              assigneeName = 'Jamie Lee';
+              assigneeInitials = 'JL';
+              break;
+            case 'taylor': 
+              assigneeName = 'Taylor Wong';
+              assigneeInitials = 'TW';
+              break;
+          }
+          
+          // Related item links
+          let relatedLink = '';
+          if (task.relatedTo === 'email') {
+            relatedLink = `<a href="inbox.html">${task.relatedItem}</a>`;
+          } else if (task.relatedTo === 'automation') {
+            relatedLink = `<a href="automation.html">${task.relatedItem}</a>`;
+          } else if (task.relatedTo === 'workflow') {
+            relatedLink = `<a href="flowconnect.html">${task.relatedItem}</a>`;
+          } else {
+            relatedLink = '--';
+          }
+          
+          row.innerHTML = `
+            <td><input type="checkbox" class="form-check-input task-check" data-id="${task.id}"></td>
+            <td>${task.title}</td>
+            <td>${relatedLink}</td>
+            <td><span class="ea-badge ${priorityClass}">${task.priority}</span></td>
+            <td><span class="ea-badge ${statusClass}">${task.status}</span></td>
+            <td>${task.dueDate}</td>
+            <td>
+              ${task.assignee ? 
+                `<div class="d-flex align-items-center">
+                  <div class="ea-avatar ea-avatar-sm me-2" style="background-color: var(--ea-primary);">${assigneeInitials}</div>
+                  <span>${assigneeName}</span>
+                </div>` : 
+                'Unassigned'}
+            </td>
+            <td>
+              <div class="d-flex gap-2">
+                <button class="ea-btn ea-btn-sm ea-btn-outline-secondary edit-task" data-id="${task.id}">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="ea-btn ea-btn-sm ea-btn-outline-danger delete-task" data-id="${task.id}">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          
+          taskListEl.appendChild(row);
+        });
+        
+        // Add event listeners for edit and delete buttons
+        document.querySelectorAll('.edit-task').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const taskId = this.getAttribute('data-id');
+            // Open edit modal with task data
+            alert(`Edit task ${taskId} (Modal would open here)`);
+          });
+        });
+        
+        document.querySelectorAll('.delete-task').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const taskId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this task?')) {
+              // Delete task logic would go here
+              alert(`Task ${taskId} deleted`);
+            }
+          });
+        });
+      }
+      
+      // Initialize task list
+      renderTasks();
+      
+      // New Task button
+      document.getElementById('newTaskBtn').addEventListener('click', function() {
+        const modal = new bootstrap.Modal(document.getElementById('taskModal'));
+        modal.show();
+      });
+      
+      // Related To dropdown change
+      document.getElementById('taskRelatedTo').addEventListener('change', function() {
+        const container = document.getElementById('relatedItemContainer');
+        const relatedItemSelect = document.getElementById('relatedItem');
+        
+        if (this.value) {
+          container.style.display = 'block';
+          relatedItemSelect.innerHTML = '';
+          
+          // Populate related items based on selection
+          if (this.value === 'email') {
+            ['RE: Order #12345 Refund', 'Customer Inquiry #54321', 'New Product Feedback'].forEach(item => {
+              const option = document.createElement('option');
+              option.value = item;
+              option.textContent = item;
+              relatedItemSelect.appendChild(option);
+            });
+          } else if (this.value === 'automation') {
+            ['Support Ticket Auto-Reply', 'Order Confirmation', 'PII Detection'].forEach(item => {
+              const option = document.createElement('option');
+              option.value = item;
+              option.textContent = item;
+              relatedItemSelect.appendChild(option);
+            });
+          } else if (this.value === 'workflow') {
+            ['Order Processing Flow', 'Customer Onboarding', 'Support Escalation'].forEach(item => {
+              const option = document.createElement('option');
+              option.value = item;
+              option.textContent = item;
+              relatedItemSelect.appendChild(option);
+            });
+          }
+        } else {
+          container.style.display = 'none';
+        }
+      });
+      
+      // Save Task button
+      document.getElementById('saveTaskBtn').addEventListener('click', function() {
+        // Form validation would go here
+        alert('Task saved successfully!');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
+        modal.hide();
+      });
+      
+      // Filter functionality
+      const filters = ['statusFilter', 'priorityFilter', 'assigneeFilter'];
+      filters.forEach(filterId => {
+        document.getElementById(filterId).addEventListener('change', applyFilters);
+      });
+      
+      function applyFilters() {
+        const statusFilter = document.getElementById('statusFilter').value;
+        const priorityFilter = document.getElementById('priorityFilter').value;
+        const assigneeFilter = document.getElementById('assigneeFilter').value;
+        
+        const filteredTasks = tasks.filter(task => {
+          const statusMatch = statusFilter === 'all' || task.status === statusFilter;
+          const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter;
+          
+          let assigneeMatch = true;
+          if (assigneeFilter === 'me') {
+            assigneeMatch = task.assignee === 'alex'; // Assuming current user is Alex
+          } else if (assigneeFilter === 'unassigned') {
+            assigneeMatch = !task.assignee;
+          }
+          
+          return statusMatch && priorityMatch && assigneeMatch;
+        });
+        
+        renderTasks(filteredTasks);
+      }
+      
+      // Select all checkbox
+      document.getElementById('selectAll').addEventListener('change', function() {
+        document.querySelectorAll('.task-check').forEach(checkbox => {
+          checkbox.checked = this.checked;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

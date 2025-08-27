@@ -1,46 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <title>Email Agent – Automation Rules Engine</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
-  <style>
-    body { font-family:'Inter',sans-serif; background:#f2f5fa; }
-    .navbar { background:#3b82f6; }
-    .navbar-brand, .nav-link { color:#fff !important; font-weight:600; }
-    .card { background:#f7f9fc; border:none; border-radius:1rem; box-shadow:0 0 10px rgba(0,0,0,0.04); }
-    .btn { border-radius:2rem; font-weight:600; }
-    .badge { border-radius:2rem; font-weight:600; }
-    .drag-handle { cursor:grab; color:#9ca3af; }
-    .chip { display:inline-block; padding:0.25rem 0.6rem; background:#e5ecfb; color:#3b82f6; border-radius:2rem; font-size:0.8rem; font-weight:600; margin-right:0.3rem; }
-    .highlight-pass { background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px; }
-    .highlight-warn { background:#fef9c3; color:#92400e; padding:2px 6px; border-radius:4px; }
-    .highlight-block { background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Automation Agent - Automation Rules Engine</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="shared.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg mb-3">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Email Agent</a>
-    </div>
-  </nav>
+  <!-- Layout Wrapper -->
+  <div class="ea-layout-wrapper">
+    <!-- Sidebar -->
+    <aside class="ea-sidebar">
+      <div class="ea-sidebar-header">
+        <a href="index.html" class="ea-sidebar-logo">
+          <i class="bi bi-envelope-paper me-2"></i>
+          <span>Email Automation</span>
+        </a>
+        <button class="ea-sidebar-close d-lg-none">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="ea-sidebar-content">
+        <ul class="ea-sidebar-nav">
+          <li class="ea-sidebar-item">
+            <a href="index.html" class="ea-sidebar-link">
+              <i class="bi bi-speedometer2"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="inbox.html" class="ea-sidebar-link">
+              <i class="bi bi-inbox"></i>
+              <span>Inbox</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="automation.html" class="ea-sidebar-link active">
+              <i class="bi bi-gear"></i>
+              <span>Automation Rules</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="flowconnect.html" class="ea-sidebar-link">
+              <i class="bi bi-diagram-3"></i>
+              <span>Workflow Builder</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="promptlib.html" class="ea-sidebar-link">
+              <i class="bi bi-chat-square-text"></i>
+              <span>Prompt Library</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="kbrules.html" class="ea-sidebar-link">
+              <i class="bi bi-shield-check"></i>
+              <span>Guardrails</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="#" class="ea-sidebar-link">
+              <i class="bi bi-sliders"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+          <li class="ea-sidebar-item">
+            <a href="#" class="ea-sidebar-link">
+              <i class="bi bi-question-circle"></i>
+              <span>Help & Support</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="container py-3">
+    <!-- Main Content -->
+    <main class="ea-main">
+      <!-- Header -->
+      <header class="ea-header">
+        <div>
+          <button class="btn ea-btn-sm ea-btn-light d-lg-none me-2" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <nav class="ea-breadcrumb">
+            <li class="ea-breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="ea-breadcrumb-item active">Automation Rules</li>
+          </nav>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="dropdown">
+            <button class="btn ea-btn ea-btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              <span>Admin</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="ea-content">
     <!-- Toolbar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h4 class="mb-0">Automation Rules</h4>
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-dark">Export</button>
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">+ Create Rule</button>
+        <button class="btn ea-btn ea-btn-outline-dark">Export</button>
+        <a href="flowconnect.html" class="btn ea-btn ea-btn-outline-secondary">
+          <i class="bi bi-diagram-3 me-1"></i> Flow Builder
+        </a>
+        <button class="btn ea-btn ea-btn-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">
+          <i class="bi bi-plus-lg me-1"></i> Create Rule
+        </button>
       </div>
     </div>
 
     <!-- Rules Table -->
-    <div class="card">
-      <div class="card-body p-0">
+    <div class="ea-card">
+      <div class="ea-card-body p-0">
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead>
@@ -56,16 +140,16 @@
             </thead>
             <tbody>
               <tr>
-                <td class="text-center"><span class="drag-handle bi bi-grip-vertical"></span></td>
+                <td class="text-center"><span class="ea-drag-handle bi bi-grip-vertical"></span></td>
                 <td><strong>Refund Auto-Draft</strong><br><small class="text-muted">Auto handles refund inquiries</small></td>
                 <td>
-                  <span class="chip">Subject: contains "refund"</span>
-                  <span class="chip">Intent = refund</span>
+                  <span class="ea-chip">Subject: contains "refund"</span>
+                  <span class="ea-chip">Intent = refund</span>
                 </td>
                 <td>
-                  <span class="chip">Prompt: Return Policy Inquiry</span>
-                  <span class="chip">Queue: Billing</span>
-                  <span class="chip">Approval Required</span>
+                  <span class="ea-chip">Prompt: Return Policy Inquiry</span>
+                  <span class="ea-chip">Queue: Billing</span>
+                  <span class="ea-chip">Approval Required</span>
                 </td>
                 <td>42</td>
                 <td>
@@ -74,15 +158,15 @@
                   </div>
                 </td>
                 <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
-                  <button class="btn btn-sm btn-outline-dark">Clone</button>
+                  <button class="btn ea-btn-sm ea-btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
+                  <button class="btn ea-btn-sm ea-btn-outline-dark">Clone</button>
                 </td>
               </tr>
               <tr>
-                <td class="text-center"><span class="drag-handle bi bi-grip-vertical"></span></td>
+                <td class="text-center"><span class="ea-drag-handle bi bi-grip-vertical"></span></td>
                 <td><strong>VIP Escalation</strong><br><small class="text-muted">Escalates VIP domains</small></td>
-                <td><span class="chip">Sender domain: @vip.com</span></td>
-                <td><span class="chip">Queue: VIP</span><span class="chip">SLA: P1</span></td>
+                <td><span class="ea-chip">Sender domain: @vip.com</span></td>
+                <td><span class="ea-chip">Queue: VIP</span><span class="ea-chip">SLA: P1</span></td>
                 <td>12</td>
                 <td>
                   <div class="form-check form-switch">
@@ -90,8 +174,8 @@
                   </div>
                 </td>
                 <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
-                  <button class="btn btn-sm btn-outline-dark">Clone</button>
+                  <button class="btn ea-btn-sm ea-btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ruleModal">Edit</button>
+                  <button class="btn ea-btn-sm ea-btn-outline-dark">Clone</button>
                 </td>
               </tr>
             </tbody>
@@ -103,185 +187,122 @@
   </div>
 
   <!-- Rule Modal -->
-  <div class="modal fade" id="ruleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+  <div class="modal fade" id="ruleModal" tabindex="-1" aria-labelledby="ruleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Rule Editor</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title" id="ruleModalLabel">Create Automation Rule</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form>
-            <div class="row g-4">
-              <!-- Basics -->
-              <div class="col-lg-4">
-                <div class="card mb-3">
-                  <div class="card-body">
-                    <h6 class="mb-3">Basics</h6>
-                    <div class="mb-3">
-                      <label class="form-label">Name</label>
-                      <input class="form-control" placeholder="e.g., Refund Auto-Draft"/>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Description</label>
-                      <textarea class="form-control" rows="2" placeholder="Short description"></textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Priority</label>
-                      <input type="number" class="form-control" value="1"/>
-                    </div>
-                    <div class="form-check form-switch mb-2">
-                      <input class="form-check-input" type="checkbox" checked/>
-                      <label class="form-check-label">Enabled</label>
-                    </div>
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" checked/>
-                      <label class="form-check-label">Stop on Match</label>
-                    </div>
+            <div class="mb-3">
+              <label class="form-label">Rule Name</label>
+              <input type="text" class="form-control" placeholder="Enter rule name">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <input type="text" class="form-control" placeholder="Brief description of this rule">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label">Conditions</label>
+              <div class="ea-card mb-2">
+                <div class="ea-card-body p-3">
+                  <div class="d-flex align-items-center mb-2">
+                    <select class="form-select me-2">
+                      <option>Subject</option>
+                      <option>From</option>
+                      <option>To</option>
+                      <option>Intent</option>
+                      <option>Sentiment</option>
+                    </select>
+                    <select class="form-select me-2">
+                      <option>contains</option>
+                      <option>equals</option>
+                      <option>starts with</option>
+                      <option>ends with</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Value">
+                    <button class="btn ea-btn-sm ea-btn-outline-danger ms-2">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </div>
                 </div>
               </div>
-              <!-- Tabs -->
-              <div class="col-lg-8">
-                <ul class="nav nav-pills mb-3">
-                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#condTab" type="button">Conditions</button></li>
-                  <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#actTab" type="button">Actions</button></li>
-                  <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#simTab" type="button">Simulation</button></li>
-                </ul>
-                <div class="tab-content">
-                  <!-- Conditions -->
-                  <div class="tab-pane fade show active" id="condTab">
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h6 class="mb-3">All Conditions (AND)</h6>
-                        <div class="mb-2">
-                          <select class="form-select mb-2">
-                            <option>Subject contains</option>
-                            <option>Body contains</option>
-                            <option>Sender domain</option>
-                            <option>Intent equals</option>
-                            <option>Tone equals</option>
-                          </select>
-                          <input class="form-control" placeholder="Value"/>
-                        </div>
-                        <button class="btn btn-outline-dark btn-sm">+ Add Condition</button>
-                      </div>
-                    </div>
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 class="mb-3">Any Condition (OR)</h6>
-                        <div class="mb-2">
-                          <select class="form-select mb-2">
-                            <option>Subject contains</option>
-                            <option>Body regex</option>
-                            <option>Sender domain</option>
-                          </select>
-                          <input class="form-control" placeholder="Value"/>
-                        </div>
-                        <button class="btn btn-outline-dark btn-sm">+ Add Condition</button>
-                      </div>
-                    </div>
+              <button class="btn ea-btn-sm ea-btn-outline-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Condition
+              </button>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label">Actions</label>
+              <div class="ea-card mb-2">
+                <div class="ea-card-body p-3">
+                  <div class="d-flex align-items-center mb-2">
+                    <select class="form-select me-2">
+                      <option>Auto-Reply</option>
+                      <option>Forward to Human Agent</option>
+                      <option>Tag Email</option>
+                      <option>Set Priority</option>
+                    </select>
+                    <button class="btn ea-btn-sm ea-btn-outline-danger ms-2">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </div>
-                  <!-- Actions -->
-                  <div class="tab-pane fade" id="actTab">
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h6 class="mb-3">Email Creation Settings</h6>
-                        <div class="row g-2 mb-3">
-                          <div class="col-md-6">
-                            <label class="form-label">Prompt Template</label>
-                            <select class="form-select">
-                              <option>Return Policy Inquiry</option>
-                              <option>Shipping Delay Update</option>
-                              <option>Warranty Coverage Info</option>
-                            </select>
-                          </div>
-                          <div class="col-md-6">
-                            <label class="form-label">Mailbox (From)</label>
-                            <select class="form-select">
-                              <option>support@shopnow.com</option>
-                              <option>billing@shopnow.com</option>
-                              <option>no-reply@shopnow.com</option>
-                            </select>
-                          </div>
-                          <div class="col-md-12">
-                            <label class="form-label">Subject Line (from Prompt)</label>
-                            <input class="form-control" value="Re: {{subject}}" readonly/>
-                          </div>
-                        </div>
-                        <div class="form-check mb-2"><input class="form-check-input" type="radio" name="sendMode" checked/><label class="form-check-label">Auto-Send</label></div>
-                        <div class="form-check mb-2"><input class="form-check-input" type="radio" name="sendMode"/><label class="form-check-label">Draft Only</label></div>
-                        <div class="form-check mb-2"><input class="form-check-input" type="radio" name="sendMode"/><label class="form-check-label">Require Human Approval</label></div>
-                      </div>
-                    </div>
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h6 class="mb-3">Routing</h6>
-                        <div class="row g-2 mb-3">
-                          <div class="col-md-6">
-                            <label class="form-label">Queue</label>
-                            <select class="form-select"><option>Support</option><option>Billing</option><option>VIP</option></select>
-                          </div>
-                          <div class="col-md-6">
-                            <label class="form-label">SLA Policy</label>
-                            <select class="form-select"><option>P1</option><option>P2</option></select>
-                          </div>
-                        </div>
-                        <div class="mb-2">
-                          <label class="form-label">Labels</label>
-                          <input class="form-control" placeholder="AI-draft, High-priority"/>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 class="mb-3">Guardrails</h6>
-                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked/><label class="form-check-label">Check banned phrases</label></div>
-                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked/><label class="form-check-label">Enforce tone compliance</label></div>
-                        <div class="mb-2">
-                          <label class="form-label">Max Refund %</label>
-                          <input type="number" class="form-control" value="20"/>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="mt-3">
+                    <label class="form-label">Select Prompt Template</label>
+                    <select class="form-select mb-2">
+                      <option>Return Policy Inquiry</option>
+                      <option>Shipping Status Update</option>
+                      <option>Product Information</option>
+                      <option>Custom Template</option>
+                    </select>
+                    <label class="form-label">Select Mailbox</label>
+                    <select class="form-select">
+                      <option>support@example.com</option>
+                      <option>sales@example.com</option>
+                      <option>info@example.com</option>
+                    </select>
                   </div>
-                  <!-- Simulation -->
-                  <div class="tab-pane fade" id="simTab">
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h6 class="mb-3">Simulation Input</h6>
-                        <input class="form-control mb-2" placeholder="Subject"/>
-                        <textarea class="form-control mb-2" rows="3" placeholder="Body"></textarea>
-                        <button class="btn btn-outline-primary">Run Simulation</button>
-                      </div>
-                    </div>
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 class="mb-3">Result</h6>
-                        <div><span class="highlight-pass">Matched: Subject contains 'refund'</span></div>
-                        <div><span class="highlight-warn">Warn: Phrase 'ASAP' detected</span></div>
-                        <div><span class="highlight-block">Blocked: Refund 50% > cap</span></div>
-                        <hr>
-                        <div>→ Would trigger <strong>Return Policy Inquiry</strong> prompt, routed to <strong>Billing</strong> queue, with <strong>Human Approval</strong> required.</div>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- tab-content -->
+                </div>
               </div>
+              <button class="btn ea-btn-sm ea-btn-outline-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Action
+              </button>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-outline-dark">Delete</button>
-          <div class="d-flex gap-2">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button class="btn btn-success">Save Rule</button>
-          </div>
+          <button type="button" class="btn ea-btn ea-btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn ea-btn ea-btn-primary">Save Rule</button>
         </div>
       </div>
     </div>
   </div>
+</main>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Sidebar toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.ea-sidebar');
+    const sidebarClose = document.querySelector('.ea-sidebar-close');
+    
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('ea-sidebar-mobile-open');
+      });
+    }
+    
+    if (sidebarClose) {
+      sidebarClose.addEventListener('click', function() {
+        sidebar.classList.remove('ea-sidebar-mobile-open');
+      });
+    }
+  });
+</script>
 </body>
 </html>

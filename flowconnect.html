@@ -3,60 +3,279 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Email Agent — Connector Flow Builder</title>
+<title>Email Automation Agent — Workflow Builder</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawflow@0.0.52/dist/drawflow.min.css"/>
+<link rel="stylesheet" href="shared.css"/>
 <style>
-  html,body{font-family:'Inter',sans-serif!important;background:#f2f5fa;}
-  .navbar{background:#3b82f6!important;color:#fff}
-  .navbar .navbar-brand,.navbar .nav-link{color:#fff!important;font-weight:600}
-  .btn{border:none;border-radius:2rem;font-weight:600}
-  .btn-primary{background:#3b82f6!important}
-  .btn-outline-primary{background:#e5ecfb!important;color:#3b82f6!important}
-  .btn-outline-dark{background:#e5e7eb!important;color:#22223b!important}
-  .btn-success{background:#22c55e!important}
-  .card{background:#f7f9fc!important;border:none;border-radius:1rem!important;box-shadow:0 0 10px rgba(0,0,0,.04)!important}
-  .card-body{padding:1.1rem 1.3rem}
-  .kpi{background:#fff;border:1px solid #e5e7eb;border-radius:.9rem;padding:.7rem 1rem}
-  .kpi .value{font-weight:800}
-  .palette .list-group-item{border:1px dashed #cbd5e1;background:#fff;border-radius:.75rem;cursor:grab}
-  #drawflow{height:70vh;min-height:460px;background:#ffffff;border:2px dashed #cbd5e1;border-radius:.9rem}
-  .drawflow .drawflow-node{background:#fff;border:1px solid #e0e7ef;border-radius:.8rem;box-shadow:none}
-  .drawflow .drawflow-node.selected{outline:2px solid #3b82f6}
-  .node-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef2f7;padding:.5rem .65rem}
-  .node-title{font-weight:700;display:flex;align-items:center;gap:.45rem}
-  .node-body{padding:.55rem .65rem}
-  .chip{display:inline-block;padding:.15rem .5rem;background:#e5ecfb;color:#3b82f6;border-radius:2rem;font-size:.75rem;font-weight:600;margin-right:.3rem;margin-bottom:.25rem}
-  .port-badges{display:flex;flex-wrap:wrap;gap:.25rem}
-  .badge-port{border-radius:2rem;font-size:.68rem;font-weight:700}
-  .port-then,.port-pass,.port-approved,.port-sent,.port-next{background:#def7ec;color:#2563eb}
-  .port-else,.port-block,.port-rejected,.port-error{background:#fde68a;color:#b45309}
-  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
-  .box{background:#0b1220;color:#e2e8f0;border-radius:.6rem;padding:.75rem;font-size:.85rem;max-height:260px;overflow:auto}
+  /* Flow Builder specific styles */
+  .palette .list-group-item {
+    border: 1px dashed #cbd5e1;
+    background: #fff;
+    border-radius: 0.75rem;
+    cursor: grab;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+    padding: 10px 15px;
+  }
+  
+  .palette .list-group-item:hover {
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  #drawflow {
+    height: 70vh;
+    min-height: 460px;
+    background: #ffffff;
+    background-image: radial-gradient(#e0e7ef 1px, transparent 1px);
+    background-size: 20px 20px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 0.9rem;
+  }
+  
+  .drawflow .drawflow-node {
+    background: #fff;
+    border: 1px solid #e0e7ef;
+    border-radius: 0.8rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    min-width: 200px;
+  }
+  
+  .drawflow .drawflow-node.selected {
+    outline: 2px solid var(--ea-primary);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  
+  .node-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eef2f7;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+  }
+  
+  .node-title {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--ea-primary);
+  }
+  
+  .node-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .node-config {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #eef2f7;
+  }
+  
+  .node-config-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .node-config-label {
+    font-weight: 600;
+    color: #64748b;
+    width: 80px;
+    flex-shrink: 0;
+  }
+  
+  .node-config-value {
+    color: #334155;
+  }
+  
+  .chip {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--ea-primary-light);
+    color: var(--ea-primary);
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+    margin-bottom: 0.25rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .port-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  
+  .badge-port {
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .badge-port:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .port-then, .port-pass, .port-approved, .port-sent, .port-next {
+    background: #def7ec;
+    color: #2563eb;
+  }
+  
+  .port-else, .port-block, .port-rejected, .port-error {
+    background: #fde68a;
+    color: #b45309;
+  }
+  
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  
+  .box {
+    background: #0b1220;
+    color: #e2e8f0;
+    border-radius: 0.6rem;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    max-height: 260px;
+    overflow: auto;
+  }
+  
+  .kpi {
+    background: #fff;
+    border: 1px solid var(--ea-gray-light);
+    border-radius: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+  
+  .kpi .value {
+    font-weight: 800;
+  }
+  
+  .connection .main-path {
+    stroke: #64748b;
+    stroke-width: 2px;
+  }
+  
+  .connection.selected .main-path {
+    stroke: var(--ea-primary);
+    stroke-width: 3px;
+  }
 </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg mb-3">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Email Agent</a>
-    <div class="ms-auto d-flex gap-2">
-      <button class="btn btn-outline-primary" id="btnExport"><i class="bi bi-box-arrow-down"></i> Export JSON</button>
-      <button class="btn btn-primary" id="btnValidate"><i class="bi bi-shield-check"></i> Validate</button>
-      <button class="btn btn-success" id="btnSimulate"><i class="bi bi-play-fill"></i> Simulate</button>
+<!-- Sidebar -->
+<div class="ea-sidebar" id="sidebar">
+  <div class="ea-sidebar-header">
+    <div class="ea-sidebar-brand">
+      <i class="bi bi-envelope-paper me-2"></i>
+      <span>Email Automation</span>
+    </div>
+    <button class="ea-sidebar-close d-lg-none" id="sidebarClose">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  <div class="ea-sidebar-menu">
+    <a href="index.html" class="ea-sidebar-item">
+      <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="inbox.html" class="ea-sidebar-item">
+      <i class="bi bi-inbox ea-sidebar-icon"></i>
+      <span>Inbox</span>
+    </a>
+    <a href="automation.html" class="ea-sidebar-item">
+      <i class="bi bi-lightning ea-sidebar-icon"></i>
+      <span>Automation Rules</span>
+    </a>
+    <a href="flowconnect.html" class="ea-sidebar-item active">
+      <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+      <span>Workflow Builder</span>
+    </a>
+    <a href="promptlib.html" class="ea-sidebar-item">
+      <i class="bi bi-chat-square-text ea-sidebar-icon"></i>
+      <span>Prompt Library</span>
+    </a>
+    <a href="kbrules.html" class="ea-sidebar-item">
+      <i class="bi bi-shield-check ea-sidebar-icon"></i>
+      <span>Guardrails</span>
+    </a>
+    <a href="#" class="ea-sidebar-item">
+      <i class="bi bi-gear ea-sidebar-icon"></i>
+      <span>Settings</span>
+    </a>
+    <a href="#" class="ea-sidebar-item">
+      <i class="bi bi-question-circle ea-sidebar-icon"></i>
+      <span>Help & Support</span>
+    </a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="ea-main">
+  <!-- Header -->
+  <div class="ea-header">
+    <div class="ea-header-left">
+      <button class="ea-sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+      </button>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Workflow Builder</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="ea-header-right">
+      <div class="dropdown">
+        <button class="ea-user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-person-circle me-1"></i>
+          <span>User</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Logout</a></li>
+        </ul>
+      </div>
     </div>
   </div>
-</nav>
+  
+  <!-- Content -->
+  <div class="ea-content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Workflow Builder</h4>
+      <div class="d-flex gap-2">
+        <button class="ea-btn ea-btn-outline-primary" id="btnExport"><i class="bi bi-box-arrow-down"></i> Export JSON</button>
+        <button class="ea-btn ea-btn-primary" id="btnValidate"><i class="bi bi-shield-check"></i> Validate</button>
+        <button class="ea-btn ea-btn-success" id="btnSimulate"><i class="bi bi-play-fill"></i> Simulate</button>
+      </div>
+    </div>
 
-<div class="container pb-5">
-  <div class="row g-3">
-    <div class="col-lg-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="mb-2">Palette</h5>
-          <div class="small text-muted mb-2">Drag into the canvas, then link ports.</div>
-          <div id="palette" class="palette list-group">
+    <div class="row g-3">
+      <div class="col-lg-3">
+        <div class="ea-card">
+          <div class="ea-card-body">
+            <h5 class="mb-2">Palette</h5>
+            <div class="small text-muted mb-2">Drag into the canvas, then link ports.</div>
+            <div id="palette" class="palette list-group">
             <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="Start">
               <span><i class="bi bi-play-fill me-2"></i>Start</span><span class="badge bg-dark text-white">Entry</span>
             </div>
@@ -97,18 +316,20 @@
       </div>
 
       <div class="d-grid mt-2">
-        <button id="btnLoadExample" class="btn btn-outline-primary btn-sm"><i class="bi bi-stars"></i> Load Example</button>
-        <button id="btnClear" class="btn btn-outline-dark btn-sm mt-1"><i class="bi bi-trash"></i> Clear</button>
+        <button id="btnLoadExample" class="ea-btn ea-btn-outline-primary btn-sm"><i class="bi bi-stars"></i> Load Example</button>
+        <button id="btnClear" class="ea-btn ea-btn-outline-secondary btn-sm mt-1"><i class="bi bi-trash"></i> Clear</button>
       </div>
     </div>
 
     <div class="col-lg-9">
-      <div class="card mb-3">
-        <div class="card-body">
+      <div class="ea-card mb-3">
+        <div class="ea-card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="mb-0">Connector Canvas</h5>
             <div class="d-flex gap-2">
-              <span class="chip">Ports: <span class="badge badge-port port-then">then/pass/approved/sent/next</span> <span class="badge badge-port port-else">else/block/rejected/error</span></span>
+              <button class="ea-btn ea-btn-sm ea-btn-outline-secondary" id="btnZoomIn"><i class="bi bi-zoom-in"></i></button>
+              <button class="ea-btn ea-btn-sm ea-btn-outline-secondary" id="btnZoomOut"><i class="bi bi-zoom-out"></i></button>
+              <button class="ea-btn ea-btn-sm ea-btn-outline-secondary" id="btnZoomReset"><i class="bi bi-arrows-fullscreen"></i></button>
             </div>
           </div>
           <div id="drawflow"></div>
@@ -163,6 +384,25 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/drawflow@0.0.52/dist/drawflow.min.js"></script>
 <script>
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarClose = document.getElementById('sidebarClose');
+  
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('ea-sidebar-mobile-open');
+    });
+  }
+  
+  if (sidebarClose) {
+    sidebarClose.addEventListener('click', function() {
+      sidebar.classList.remove('ea-sidebar-mobile-open');
+    });
+  }
+});
+
 /* ===== Catalogs ===== */
 const PROMPTS=[{id:'p1',title:'Return Policy Inquiry'},{id:'p2',title:'Shipping Delay Update'},{id:'p3',title:'Order Confirmation'},{id:'p4',title:'VIP Outreach'}];
 const QUEUES=['Support','Billing','VIP'];
@@ -263,8 +503,103 @@ function renderNodeHtml(t,d){
     </div>
     <div class="node-body">
       ${summary(t,d)}
+      ${renderNodeConfig(t,d)}
       <div class="port-badges mt-1">${portBadges(t)}</div>
     </div>`;
+}
+
+function renderNodeConfig(t,d){
+  switch(t){
+    case 'GenerateDraft': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Prompt:</div>
+            <div class="node-config-value">${idToTitle(PROMPTS,d.promptId)}</div>
+          </div>
+          <div class="node-config-item">
+            <div class="node-config-label">Mailbox:</div>
+            <div class="node-config-value">${d.mailbox}</div>
+          </div>
+        </div>`;
+    case 'RunGuardrails': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Mode:</div>
+            <div class="node-config-value">${d.mode}</div>
+          </div>
+        </div>`;
+    case 'If': 
+      return `
+        <div class="node-config">
+          ${(d.conditions||[]).map(c=>`
+            <div class="node-config-item">
+              <div class="node-config-label">Condition:</div>
+              <div class="node-config-value">${c.field} ${c.op} ${esc(c.value)}</div>
+            </div>
+          `).join('') || `
+            <div class="node-config-item">
+              <div class="node-config-label">Condition:</div>
+              <div class="node-config-value">Not configured</div>
+            </div>
+          `}
+        </div>`;
+    case 'RequireApproval': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Queue:</div>
+            <div class="node-config-value">${d.queue}</div>
+          </div>
+        </div>`;
+    case 'SendEmail': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">From:</div>
+            <div class="node-config-value">${d.from}</div>
+          </div>
+        </div>`;
+    case 'ApplyLabel': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Labels:</div>
+            <div class="node-config-value">${d.labels}</div>
+          </div>
+        </div>`;
+    case 'MoveToQueue': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Queue:</div>
+            <div class="node-config-value">${d.queue}</div>
+          </div>
+        </div>`;
+    case 'Notify': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Channel:</div>
+            <div class="node-config-value">${d.channel}</div>
+          </div>
+          <div class="node-config-item">
+            <div class="node-config-label">Target:</div>
+            <div class="node-config-value">${d.target}</div>
+          </div>
+        </div>`;
+    case 'Join': 
+      return `
+        <div class="node-config">
+          <div class="node-config-item">
+            <div class="node-config-label">Mode:</div>
+            <div class="node-config-value">${d.mode}</div>
+          </div>
+        </div>`;
+    default: return '';
+  }
+}
 }
 
 window.openCfg = function(btn){

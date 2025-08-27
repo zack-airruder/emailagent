@@ -3,16 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <title>Email Agent – Guardrails</title>
+  <title>Email Automation Agent - Guardrails</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" href="shared.css"/>
   <style>
-    body { font-family:'Inter',sans-serif !important; background:#f2f5fa; }
-    .navbar { background:#3b82f6 !important; }
-    .navbar-brand, .nav-link { color:#fff !important; font-weight:600; }
-    .card { background:#f7f9fc !important; border:none; border-radius:1rem; box-shadow:0 0 10px rgba(0,0,0,0.04); }
-    .btn { border-radius:2rem; font-weight:600; }
-    .badge { border-radius:2rem; font-weight:600; }
     .tag-chip { background:#e5ecfb; color:#3b82f6; border-radius:2rem; padding:0.25rem 0.6rem; font-size:0.85rem; font-weight:600; display:inline-flex; align-items:center; }
     .tag-chip .remove { cursor:pointer; margin-left:.35rem; opacity:.7; }
     .highlight-block { background:#fee2e2; color:#991b1b; }
@@ -20,36 +16,116 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg mb-3">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Email Agent</a>
+<!-- Sidebar -->
+<div class="ea-sidebar" id="sidebar">
+  <div class="ea-sidebar-header">
+    <div class="ea-sidebar-brand">
+      <i class="bi bi-envelope-paper me-2"></i>
+      <span>Email Automation</span>
     </div>
-  </nav>
+    <button class="ea-sidebar-close d-lg-none" id="sidebarClose">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  <div class="ea-sidebar-menu">
+    <a href="index.html" class="ea-sidebar-item">
+      <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="inbox.html" class="ea-sidebar-item">
+      <i class="bi bi-inbox ea-sidebar-icon"></i>
+      <span>Inbox</span>
+    </a>
+    <a href="automation.html" class="ea-sidebar-item">
+      <i class="bi bi-lightning ea-sidebar-icon"></i>
+      <span>Automation Rules</span>
+    </a>
+    <a href="flowconnect.html" class="ea-sidebar-item">
+      <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+      <span>Workflow Builder</span>
+    </a>
+    <a href="promptlib.html" class="ea-sidebar-item">
+      <i class="bi bi-chat-square-text ea-sidebar-icon"></i>
+      <span>Prompt Library</span>
+    </a>
+    <a href="kbrules.html" class="ea-sidebar-item active">
+      <i class="bi bi-shield-check ea-sidebar-icon"></i>
+      <span>Guardrails</span>
+    </a>
+    <a href="#" class="ea-sidebar-item">
+      <i class="bi bi-gear ea-sidebar-icon"></i>
+      <span>Settings</span>
+    </a>
+    <a href="#" class="ea-sidebar-item">
+      <i class="bi bi-question-circle ea-sidebar-icon"></i>
+      <span>Help & Support</span>
+    </a>
+  </div>
+</div>
 
-  <ul class="nav nav-tabs justify-content-center mb-3">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#guardrails">Guardrails</button></li>
-  </ul>
+<!-- Main Content -->
+<div class="ea-main">
+  <!-- Header -->
+  <div class="ea-header">
+    <div class="ea-header-left">
+      <button class="ea-sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+      </button>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Guardrails</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="ea-header-right">
+      <div class="dropdown">
+        <button class="ea-user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-person-circle me-1"></i>
+          <span>User</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-  <div class="tab-content">
-    <div class="tab-pane fade show active" id="guardrails">
-      <div class="container py-3">
-        <div class="row g-3">
-          <!-- Banned/Flagged Phrases -->
-          <div class="col-lg-6">
-            <div class="card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="mb-0">Banned / Flagged Phrases</h5>
-                  <button class="btn btn-outline-primary btn-sm" id="addPhraseBtn">+ Add</button>
-                </div>
-                <div id="phraseList" class="d-flex flex-wrap gap-2"></div>
+  <!-- Content Area -->
+  <div class="ea-content">
+    <div class="container py-3">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h4>Guardrails Configuration</h4>
+          <p class="text-muted">Configure safety guardrails for AI-generated email responses</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <a href="flowconnect.html" class="ea-btn ea-btn-outline-secondary">
+            <i class="bi bi-diagram-3 me-1"></i> Use in Workflows
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <!-- Banned/Flagged Phrases -->
+        <div class="col-lg-6">
+          <div class="ea-card h-100">
+            <div class="ea-card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Banned / Flagged Phrases</h5>
+                <button class="ea-btn ea-btn-outline-primary ea-btn-sm" id="addPhraseBtn">+ Add</button>
               </div>
+              <div id="phraseList" class="d-flex flex-wrap gap-2"></div>
             </div>
           </div>
+        </div>
           <!-- Tone & Policy -->
           <div class="col-lg-6 d-flex flex-column gap-3">
-            <div class="card">
-              <div class="card-body">
+            <div class="ea-card">
+              <div class="ea-card-body">
                 <h5 class="mb-3">Tone Guardrails</h5>
                 <select id="toneSelect" class="form-select" multiple>
                   <option value="professional">Professional</option>
@@ -61,8 +137,8 @@
                 <div class="form-text">Only selected tones are allowed.</div>
               </div>
             </div>
-            <div class="card">
-              <div class="card-body">
+            <div class="ea-card">
+              <div class="ea-card-body">
                 <h5 class="mb-3">Policy Caps</h5>
                 <div class="mb-3">
                   <label class="form-label fw-semibold">Max Refund %</label>
@@ -74,8 +150,8 @@
                 </div>
               </div>
             </div>
-            <div class="card">
-              <div class="card-body">
+            <div class="ea-card">
+              <div class="ea-card-body">
                 <h5 class="mb-3">Rate Limits</h5>
                 <div class="mb-3">
                   <label class="form-label fw-semibold">Max auto-sends per mailbox per hour</label>
@@ -87,12 +163,12 @@
         </div>
 
         <!-- Test Panel -->
-        <div class="card mt-4">
-          <div class="card-body">
+        <div class="ea-card mt-4">
+          <div class="ea-card-body">
             <h5 class="mb-3">Guardrail Test Panel</h5>
             <textarea id="testDraft" rows="6" class="form-control mb-3" placeholder="Paste AI draft reply..."></textarea>
             <div class="d-flex justify-content-end mb-3">
-              <button id="runGuardrailTest" class="btn btn-outline-primary">Run Test</button>
+              <button id="runGuardrailTest" class="ea-btn ea-btn-outline-primary">Run Test</button>
             </div>
             <h6 class="mb-2">Result</h6>
             <div id="testResult" class="p-3 bg-white rounded border" style="min-height:100px;">No test run yet.</div>
@@ -101,6 +177,7 @@
       </div>
     </div>
   </div>
+</div>
 
   <!-- Phrase Modal -->
   <div class="modal fade" id="phraseModal" tabindex="-1">

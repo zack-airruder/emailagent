@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Email Automation Agent - Dashboard</title>
+  <!-- Core Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="shared.css">
+  <!-- Page Specific Styles -->
+  <style>
+    /* Additional page-specific styles can go here */
+  </style>
+</head>
+<body>
+  <div class="ea-wrapper">
+    <!-- Sidebar -->
+    <aside class="ea-sidebar">
+      <div class="ea-sidebar-header">
+        <a href="index.html" class="ea-sidebar-brand">
+          <i class="bi bi-envelope-paper"></i>
+          <span>Email Agent</span>
+        </a>
+        <button class="ea-sidebar-toggle d-lg-none" id="sidebarClose">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <ul class="ea-sidebar-menu">
+        <li class="ea-sidebar-item">
+          <a href="index.html" class="ea-sidebar-link active">
+            <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="inbox.html" class="ea-sidebar-link">
+            <i class="bi bi-inbox ea-sidebar-icon"></i>
+            <span>Inbox</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="automation.html" class="ea-sidebar-link">
+            <i class="bi bi-lightning ea-sidebar-icon"></i>
+            <span>Automation Rules</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="flowconnect.html" class="ea-sidebar-link">
+            <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+            <span>Workflow Builder</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="promptlib.html" class="ea-sidebar-link">
+            <i class="bi bi-chat-left-text ea-sidebar-icon"></i>
+            <span>Prompt Library</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="kbrules.html" class="ea-sidebar-link">
+            <i class="bi bi-shield-check ea-sidebar-icon"></i>
+            <span>Guardrails</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-gear ea-sidebar-icon"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-question-circle ea-sidebar-icon"></i>
+            <span>Help & Support</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    
+    <!-- Sidebar Backdrop (Mobile) -->
+    <div class="ea-sidebar-backdrop" id="sidebarBackdrop"></div>
+    
+    <!-- Main Content -->
+      <main class="ea-main">
+        <!-- Header -->
+        <header class="ea-header">
+          <div>
+            <button class="btn ea-btn-sm ea-btn-light d-lg-none me-2" id="sidebarToggle">
+              <i class="bi bi-list"></i>
+            </button>
+            <nav class="ea-breadcrumb">
+              <li class="ea-breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="ea-breadcrumb-item active">Dashboard</li>
+            </nav>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="dropdown me-2">
+              <button class="btn ea-btn ea-btn-light dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Last 7 Days
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+                <li><a class="dropdown-item" href="#">Custom Range</a></li>
+              </ul>
+            </div>
+            <div class="dropdown">
+              <button class="btn ea-btn ea-btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle me-1"></i>
+                <span>Admin</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        </header>
+      <!-- Content -->
+      <div class="ea-content">
+        <!-- Welcome Card with Quick Actions -->
+        <div class="ea-card mb-4">
+          <div class="ea-card-body">
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <h4>Welcome to Email Automation Agent</h4>
+                <p class="mb-4">Your intelligent email automation platform powered by AI. Monitor performance, configure workflows, and let AI handle your email communications.</p>
+                <div class="d-flex gap-2">
+                  <button class="btn ea-btn ea-btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Connect Mailbox
+                  </button>
+                  <button class="btn ea-btn ea-btn-outline-primary">
+                    <i class="bi bi-play-fill me-1"></i> Quick Tour
+                  </button>
+                </div>
+                <div class="mt-3">
+                  <div class="d-flex flex-wrap gap-3">
+                    <a href="inbox.html" class="badge bg-light text-dark p-2"><i class="bi bi-envelope me-1"></i> Check Inbox</a>
+                    <a href="flowconnect.html" class="badge bg-light text-dark p-2"><i class="bi bi-diagram-3 me-1"></i> Build Workflow</a>
+                    <a href="task.html" class="badge bg-light text-dark p-2"><i class="bi bi-check2-square me-1"></i> Manage Tasks</a>
+                    <a href="promptlib.html" class="badge bg-light text-dark p-2"><i class="bi bi-chat-left-text me-1"></i> Prompt Library</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 d-none d-lg-block text-center">
+                <i class="bi bi-envelope-paper text-primary" style="font-size: 8rem; opacity: 0.8;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Emails Processed</div>
+              <div class="ea-stat-value">1,248</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-up"></i> 12% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Auto-Replies Sent</div>
+              <div class="ea-stat-value">876</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-up"></i> 8% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Avg. Response Time</div>
+              <div class="ea-stat-value">2.4 min</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-down"></i> 15% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">LLM Token Usage</div>
+              <div class="ea-stat-value">245K</div>
+              <div class="ea-stat-change negative">
+                <i class="bi bi-arrow-up"></i> 5% from last week
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Performance Chart -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="ea-card">
+              <div class="ea-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Performance Metrics</h5>
+                <div class="dropdown">
+                  <button class="btn ea-btn ea-btn-sm ea-btn-outline-primary dropdown-toggle" type="button" id="chartOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Emails Processed
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="chartOptionsDropdown">
+                    <li><a class="dropdown-item active" href="#">Emails Processed</a></li>
+                    <li><a class="dropdown-item" href="#">Auto-Replies</a></li>
+                    <li><a class="dropdown-item" href="#">Response Time</a></li>
+                    <li><a class="dropdown-item" href="#">Token Usage</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="ea-card-body">
+                <canvas id="performanceChart" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- System Status and Activity -->
+        <div class="row g-4">
+          <!-- System Status -->
+          <div class="col-lg-6">
+            <div class="ea-card h-100">
+              <div class="ea-card-header">
+                <h5 class="mb-0">System Status</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="ea-system-status">
+                  <div class="ea-status-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="ea-status-label">Email Processing Engine</span>
+                      <span class="ea-badge ea-badge-success">Operational</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="ea-status-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="ea-status-label">NLP Classification Service</span>
+                      <span class="ea-badge ea-badge-success">Operational</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 92%" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="ea-status-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="ea-status-label">Automation Rules Engine</span>
+                      <span class="ea-badge ea-badge-success">Operational</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="ea-status-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="ea-status-label">LLM Integration</span>
+                      <span class="ea-badge ea-badge-warning">Degraded</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" style="width: 78%" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="ea-status-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="ea-status-label">Email Delivery Service</span>
+                      <span class="ea-badge ea-badge-success">Operational</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 96%" aria-valuenow="96" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- System Activity -->
+          <div class="col-lg-6">
+            <div class="ea-card h-100">
+              <div class="ea-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">System Activity</h5>
+                <a href="#" class="ea-link">View All</a>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="ea-activity-feed">
+                  <div class="ea-activity-item">
+                    <div class="ea-activity-icon bg-success">
+                      <i class="bi bi-envelope-check"></i>
+                    </div>
+                    <div class="ea-activity-content">
+                      <div class="ea-activity-title">Email Processing Complete</div>
+                      <div class="ea-activity-text">Successfully processed 24 emails from support@example.com</div>
+                      <div class="ea-activity-time">10 minutes ago</div>
+                    </div>
+                  </div>
+                  <div class="ea-activity-item">
+                    <div class="ea-activity-icon bg-warning">
+                      <i class="bi bi-shield-exclamation"></i>
+                    </div>
+                    <div class="ea-activity-content">
+                      <div class="ea-activity-title">PII Detection Rule Triggered</div>
+                      <div class="ea-activity-text">Potential PII detected in 3 emails, forwarded to human review</div>
+                      <div class="ea-activity-time">25 minutes ago</div>
+                    </div>
+                  </div>
+                  <div class="ea-activity-item">
+                    <div class="ea-activity-icon bg-primary">
+                      <i class="bi bi-inbox"></i>
+                    </div>
+                    <div class="ea-activity-content">
+                      <div class="ea-activity-title">New Inbox Connected</div>
+                      <div class="ea-activity-text">Successfully connected inbox: marketing@example.com</div>
+                      <div class="ea-activity-time">1 hour ago</div>
+                    </div>
+                  </div>
+                  <div class="ea-activity-item">
+                    <div class="ea-activity-icon bg-info">
+                      <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <div class="ea-activity-content">
+                      <div class="ea-activity-title">Prompt Library Updated</div>
+                      <div class="ea-activity-text">2 new prompt templates added for customer support responses</div>
+                      <div class="ea-activity-time">2 hours ago</div>
+                    </div>
+                  </div>
+                  <div class="ea-activity-item">
+                    <div class="ea-activity-icon bg-danger">
+                      <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="ea-activity-content">
+                      <div class="ea-activity-title">Rate Limit Warning</div>
+                      <div class="ea-activity-text">API rate limit at 85% for LLM service</div>
+                      <div class="ea-activity-time">3 hours ago</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+      /* Spacing */
+      --ea-spacing-xs: 0.25rem;
+      --ea-spacing-sm: 0.5rem;
+      --ea-spacing-md: 1rem;
+      --ea-spacing-lg: 1.5rem;
+      --ea-spacing-xl: 2rem;
+      
+      /* Border Radius */
+      --ea-radius-sm: 0.5rem;
+      --ea-radius-md: 1rem;
+      --ea-radius-lg: 1.5rem;
+      --ea-radius-pill: 2rem;
+      
+      /* Shadows */
+      --ea-shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --ea-shadow-md: 0 0 10px rgba(0,0,0,0.04);
+      --ea-shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    
+    /* Base Styles */
+    html, body {
+      font-family: 'Inter', sans-serif !important;
+      background: var(--ea-light);
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    /* Layout */
+    .ea-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .ea-sidebar {
+      width: 260px;
+      background: var(--ea-white);
+      border-right: 1px solid var(--ea-gray-light);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    
+    .ea-sidebar-collapsed {
+      width: 70px;
+    }
+    
+    .ea-sidebar-header {
+      padding: var(--ea-spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--ea-gray-light);
+    }
+    
+    .ea-sidebar-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--ea-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--ea-spacing-sm);
+    }
+    
+    .ea-sidebar-toggle {
+      background: none;
+      border: none;
+      color: var(--ea-gray);
+      cursor: pointer;
+    }
+    
+    .ea-sidebar-menu {
+      padding: var(--ea-spacing-md) 0;
+      list-style: none;
+      margin: 0;
+    }
+    
+    .ea-sidebar-item {
+      margin-bottom: var(--ea-spacing-xs);
+    }
+    
+    .ea-sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: var(--ea-spacing-sm) var(--ea-spacing-md);
+      color: var(--ea-dark);
+      text-decoration: none;
+      border-radius: var(--ea-radius-sm);
+      margin: 0 var(--ea-spacing-sm);
+      transition: all 0.2s;
+    }
+    
+    .ea-sidebar-link:hover {
+      background: var(--ea-primary-light);
+      color: var(--ea-primary);
+    }
+    
+    .ea-sidebar-link.active {
+      background: var(--ea-primary);
+      color: var(--ea-white);
+    }
+    
+    .ea-sidebar-icon {
+      margin-right: var(--ea-spacing-md);
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+    
+    .ea-sidebar-text {
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    
+    .ea-sidebar-divider {
+      height: 1px;
+      background: var(--ea-gray-light);
+      margin: var(--ea-spacing-md) var(--ea-spacing-md);
+    }
+    
+    /* Main Content */
+    .ea-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .ea-header {
+      background: var(--ea-white);
+      border-bottom: 1px solid var(--ea-gray-light);
+      padding: var(--ea-spacing-md) var(--ea-spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .ea-header-title {
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .ea-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--ea-spacing-md);
+    }
+    
+    .ea-content {
+      flex: 1;
+      padding: var(--ea-spacing-lg);
+      overflow-y: auto;
+    }
+    
+    /* Cards */
+    .ea-card {
+      background: var(--ea-white);
+      border-radius: var(--ea-radius-md);
+      box-shadow: var(--ea-shadow-md);
+      margin-bottom: var(--ea-spacing-lg);
+    }
+    
+    .ea-card-header {
+      padding: var(--ea-spacing-md) var(--ea-spacing-lg);
+      border-bottom: 1px solid var(--ea-gray-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .ea-card-title {
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .ea-card-body {
+      padding: var(--ea-spacing-lg);
+    }
+    
+    /* Stats Cards */
+    .ea-stat-card {
+      background: var(--ea-white);
+      border-radius: var(--ea-radius-md);
+      box-shadow: var(--ea-shadow-md);
+      padding: var(--ea-spacing-md);
+      height: 100%;
+    }
+    
+    .ea-stat-title {
+      color: var(--ea-gray);
+      font-size: 0.875rem;
+      margin-bottom: var(--ea-spacing-xs);
+    }
+    
+    .ea-stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: var(--ea-spacing-xs);
+    }
+    
+    .ea-stat-change {
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .ea-stat-change.positive {
+      color: var(--ea-success);
+    }
+    
+    .ea-stat-change.negative {
+      color: var(--ea-danger);
+    }
+    
+    /* Buttons */
+    .ea-btn {
+      border-radius: var(--ea-radius-pill);
+      font-weight: 600;
+      padding: 0.45rem 1.1rem;
+      border: none;
+      transition: all 0.2s;
+    }
+    
+    .ea-btn-primary {
+      background: var(--ea-primary);
+      color: var(--ea-white);
+    }
+    
+    .ea-btn-primary:hover {
+      background: #2563eb;
+      color: var(--ea-white);
+    }
+    
+    .ea-btn-outline-primary {
+      background: var(--ea-primary-light);
+      color: var(--ea-primary);
+    }
+    
+    .ea-btn-outline-primary:hover {
+      background: #d1ddf9;
+      color: var(--ea-primary);
+    }
+    
+    .ea-btn-success {
+      background: var(--ea-success);
+      color: var(--ea-white);
+    }
+    
+    .ea-btn-success:hover {
+      background: #16a34a;
+      color: var(--ea-white);
+    }
+    
+    /* Badges */
+    .ea-badge {
+      border-radius: var(--ea-radius-pill);
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.9rem;
+    }
+    
+    .ea-badge-primary {
+      background: var(--ea-primary-light);
+      color: var(--ea-primary);
+    }
+    
+    .ea-badge-success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .ea-badge-warning {
+      background: #fef9c3;
+      color: #92400e;
+    }
+    
+    .ea-badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    /* Activity Feed */
+    .ea-activity-item {
+      display: flex;
+      align-items: flex-start;
+      padding: var(--ea-spacing-md) 0;
+      border-bottom: 1px solid var(--ea-gray-light);
+    }
+    
+    .ea-activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .ea-activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--ea-primary-light);
+      color: var(--ea-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: var(--ea-spacing-md);
+      flex-shrink: 0;
+    }
+    
+    .ea-activity-content {
+      flex: 1;
+    }
+    
+    .ea-activity-title {
+      font-weight: 600;
+      margin-bottom: var(--ea-spacing-xs);
+    }
+    
+    .ea-activity-time {
+      font-size: 0.875rem;
+      color: var(--ea-gray);
+    }
+    
+    /* Responsive */
+    @media (max-width: 991.98px) {
+      .ea-sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        height: 100%;
+      }
+      
+      .ea-sidebar.show {
+        left: 0;
+      }
+      
+      .ea-sidebar-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+      }
+      
+      .ea-sidebar-backdrop.show {
+        display: block;
+      }
+    }
+    
+    @media (max-width: 767.98px) {
+      .ea-header {
+        padding: var(--ea-spacing-md);
+      }
+      
+      .ea-content {
+        padding: var(--ea-spacing-md);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ea-wrapper">
+    <!-- Sidebar -->
+    <div class="ea-sidebar" id="sidebar">
+      <div class="ea-sidebar-header">
+        <a href="index.html" class="ea-sidebar-brand">
+          <i class="bi bi-envelope-paper"></i>
+          <span>Email Agent</span>
+        </a>
+        <button class="ea-sidebar-toggle" id="sidebarToggle">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+      <ul class="ea-sidebar-menu">
+        <li class="ea-sidebar-item">
+          <a href="index.html" class="ea-sidebar-link active">
+            <i class="bi bi-grid-1x2 ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="inbox.html" class="ea-sidebar-link">
+            <i class="bi bi-inbox ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Inbox</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="automation.html" class="ea-sidebar-link">
+            <i class="bi bi-lightning ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Automation Rules</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="flowconnect.html" class="ea-sidebar-link">
+            <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Workflow Builder</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="promptlib.html" class="ea-sidebar-link">
+            <i class="bi bi-chat-square-text ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Prompt Library</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="kbrules.html" class="ea-sidebar-link">
+            <i class="bi bi-shield-check ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Guardrails</span>
+          </a>
+        </li>
+        <div class="ea-sidebar-divider"></div>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-gear ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Settings</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-question-circle ea-sidebar-icon"></i>
+            <span class="ea-sidebar-text">Help & Support</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Sidebar Backdrop (Mobile) -->
+    <div class="ea-sidebar-backdrop" id="sidebarBackdrop"></div>
+    
+    <!-- Main Content -->
+    <div class="ea-main">
+      <!-- Header -->
+      <div class="ea-header">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-2" id="sidebarToggleMobile">
+            <i class="bi bi-list"></i>
+          </button>
+          <h4 class="ea-header-title">Dashboard</h4>
+        </div>
+        <div class="ea-header-actions">
+          <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Last 7 Days
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+              <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+              <li><a class="dropdown-item" href="#">Custom Range</a></li>
+            </ul>
+          </div>
+          <div class="dropdown ms-2">
+            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              <span>User</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="ea-content">
+        <!-- Welcome Card with Quick Actions -->
+        <div class="ea-card mb-4">
+          <div class="ea-card-body">
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <h4>Welcome to Email Automation Agent</h4>
+                <p class="mb-4">Your intelligent email automation platform powered by AI. Monitor performance, configure workflows, and let AI handle your email communications.</p>
+                <div class="d-flex gap-2">
+                  <button class="btn ea-btn ea-btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Connect Mailbox
+                  </button>
+                  <button class="btn ea-btn ea-btn-outline-primary">
+                    <i class="bi bi-play-fill me-1"></i> Quick Tour
+                  </button>
+                </div>
+                <div class="mt-3">
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="#" class="badge bg-light text-dark p-2"><i class="bi bi-book me-1"></i> View Documentation</a>
+                    <a href="#" class="badge bg-light text-dark p-2"><i class="bi bi-play-circle me-1"></i> Quick Tutorial</a>
+                    <a href="#" class="badge bg-light text-dark p-2"><i class="bi bi-chat-left-dots me-1"></i> Get Support</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 d-none d-lg-block text-center">
+                <i class="bi bi-envelope-paper text-primary" style="font-size: 8rem; opacity: 0.8;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Emails Processed</div>
+              <div class="ea-stat-value">1,248</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-up me-1"></i> 12% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Auto-Replies Sent</div>
+              <div class="ea-stat-value">867</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-up me-1"></i> 8% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">Avg. Response Time</div>
+              <div class="ea-stat-value">2.4m</div>
+              <div class="ea-stat-change positive">
+                <i class="bi bi-arrow-down me-1"></i> 15% from last week
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="ea-stat-card">
+              <div class="ea-stat-title">LLM Token Usage</div>
+              <div class="ea-stat-value">24.6K</div>
+              <div class="ea-stat-change neutral">
+                <i class="bi bi-dash me-1"></i> 1% from last week
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Content Row -->
+        <div class="row g-4">
+          <!-- Left Column -->
+          <div class="col-lg-8">
+            <!-- Performance Chart -->
+            <div class="ea-card mb-4">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">Email Processing Performance</h5>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-sm btn-light active">Daily</button>
+                  <button type="button" class="btn btn-sm btn-light">Weekly</button>
+                  <button type="button" class="btn btn-sm btn-light">Monthly</button>
+                </div>
+              </div>
+              <div class="ea-card-body">
+                <canvas id="performanceChart" style="height: 300px; width: 100%;"></canvas>
+              </div>
+            </div>
+            
+            <!-- System Components Status -->
+            <div class="ea-card mb-4">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">System Components Status</h5>
+                <button class="btn btn-sm btn-light">Refresh</button>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Component</th>
+                        <th>Status</th>
+                        <th>Load</th>
+                        <th>Last Activity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="bi bi-inbox me-2 text-primary"></i>
+                            <div>
+                              <div class="fw-medium">Inbox Connector</div>
+                              <small class="text-muted">Gmail, Outlook, IMAP</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge ea-badge-success">Operational</span></td>
+                        <td>
+                          <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%"></div>
+                          </div>
+                        </td>
+                        <td><small>2 minutes ago</small></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="bi bi-funnel me-2 text-primary"></i>
+                            <div>
+                              <div class="fw-medium">Pre-Processor</div>
+                              <small class="text-muted">Email normalization</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge ea-badge-success">Operational</span></td>
+                        <td>
+                          <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 18%"></div>
+                          </div>
+                        </td>
+                        <td><small>1 minute ago</small></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="bi bi-cpu me-2 text-primary"></i>
+                            <div>
+                              <div class="fw-medium">LLM Pipeline</div>
+                              <small class="text-muted">Intent classification, summarization</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge ea-badge-success">Operational</span></td>
+                        <td>
+                          <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 65%"></div>
+                          </div>
+                        </td>
+                        <td><small>Just now</small></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="bi bi-shield-check me-2 text-primary"></i>
+                            <div>
+                              <div class="fw-medium">Rule Engine</div>
+                              <small class="text-muted">Guardrails, safety checks</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge ea-badge-success">Operational</span></td>
+                        <td>
+                          <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 32%"></div>
+                          </div>
+                        </td>
+                        <td><small>Just now</small></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="bi bi-send me-2 text-primary"></i>
+                            <div>
+                              <div class="fw-medium">Reply Dispatcher</div>
+                              <small class="text-muted">SMTP, Gmail API, Graph API</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge ea-badge-success">Operational</span></td>
+                        <td>
+                          <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
+                          </div>
+                        </td>
+                        <td><small>5 minutes ago</small></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recent Emails -->
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">Recent Emails</h5>
+                <a href="inbox.html" class="btn btn-sm btn-light">View All</a>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-1">
+                      <h6 class="mb-0">Order Confirmation #12345</h6>
+                      <small class="text-muted">2 hours ago</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <small class="text-muted">From: customer@example.com</small>
+                        <span class="ms-2 badge ea-badge-success">Auto-replied</span>
+                      </div>
+                      <button class="btn btn-sm btn-light">View</button>
+                    </div>
+                  </div>
+                  <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-1">
+                      <h6 class="mb-0">Refund Request</h6>
+                      <small class="text-muted">3 hours ago</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <small class="text-muted">From: refund@client.org</small>
+                        <span class="ms-2 badge ea-badge-warning">Needs Approval</span>
+                      </div>
+                      <button class="btn btn-sm btn-light">View</button>
+                    </div>
+                  </div>
+                  <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-1">
+                      <h6 class="mb-0">Product Inquiry</h6>
+                      <small class="text-muted">5 hours ago</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <small class="text-muted">From: prospect@example.net</small>
+                        <span class="ms-2 badge ea-badge-success">Auto-replied</span>
+                      </div>
+                      <button class="btn btn-sm btn-light">View</button>
+                    </div>
+                  </div>
+                  <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-1">
+                      <h6 class="mb-0">Partnership Opportunity</h6>
+                      <small class="text-muted">Yesterday</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <small class="text-muted">From: business@partner.co</small>
+                        <span class="ms-2 badge ea-badge-danger">Flagged</span>
+                      </div>
+                      <button class="btn btn-sm btn-light">View</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Column -->
+          <div class="col-lg-4">
+            <!-- Prompt Library Stats -->
+            <div class="ea-card mb-4">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">Prompt Library</h5>
+                <a href="promptlib.html" class="btn btn-sm btn-light">Manage</a>
+              </div>
+              <div class="ea-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>Active Prompts</div>
+                  <div class="fw-bold">12</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>Top Intent</div>
+                  <div class="badge ea-badge-primary">Customer Support</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>Avg. Effectiveness</div>
+                  <div class="fw-bold">92%</div>
+                </div>
+                <div class="mt-3">
+                  <div class="d-flex justify-content-between mb-1">
+                    <small>Intent Coverage</small>
+                    <small>85%</small>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: 85%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Rule Engine Stats -->
+            <div class="ea-card mb-4">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">Guardrails & Rules</h5>
+                <a href="kbrules.html" class="btn btn-sm btn-light">Configure</a>
+              </div>
+              <div class="ea-card-body">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-light text-center">
+                      <div class="fs-4 fw-bold text-primary">24</div>
+                      <div class="small text-muted">Active Rules</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-light text-center">
+                      <div class="fs-4 fw-bold text-success">98%</div>
+                      <div class="small text-muted">Pass Rate</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <h6 class="mb-2">Top Rule Triggers</h6>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="small">Profanity Filter</div>
+                    <div class="badge ea-badge-danger">12</div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="small">PII Detection</div>
+                    <div class="badge ea-badge-warning">8</div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="small">Tone Compliance</div>
+                    <div class="badge ea-badge-primary">5</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ea-card mb-4">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">System Status</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <div class="fw-bold">Email Processing</div>
+                    <div class="small text-muted">Last check: 2 min ago</div>
+                  </div>
+                  <span class="badge ea-badge-success">Operational</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <div class="fw-bold">AI Model</div>
+                    <div class="small text-muted">Last check: 5 min ago</div>
+                  </div>
+                  <span class="badge ea-badge-success">Operational</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <div class="fw-bold">Gmail Integration</div>
+                    <div class="small text-muted">Last check: 10 min ago</div>
+                  </div>
+                  <span class="badge ea-badge-success">Operational</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-bold">Outlook Integration</div>
+                    <div class="small text-muted">Last check: 15 min ago</div>
+                  </div>
+                  <span class="badge ea-badge-warning">Degraded</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Activity Feed -->
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="ea-card-title">System Activity</h5>
+                <button class="btn btn-sm btn-light">View All</button>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="ea-activity-item p-3">
+                  <div class="ea-activity-icon">
+                    <i class="bi bi-envelope-check"></i>
+                  </div>
+                  <div class="ea-activity-content">
+                    <div class="ea-activity-title">Email processed successfully</div>
+                    <div class="small text-muted mb-1">From: customer@example.com</div>
+                    <div class="ea-activity-time">2 minutes ago</div>
+                  </div>
+                </div>
+                <div class="ea-activity-item p-3">
+                  <div class="ea-activity-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                  </div>
+                  <div class="ea-activity-content">
+                    <div class="ea-activity-title">Rule triggered: PII Detection</div>
+                    <div class="small text-muted mb-1">Email escalated to human review</div>
+                    <div class="ea-activity-time">15 minutes ago</div>
+                  </div>
+                </div>
+                <div class="ea-activity-item p-3">
+                  <div class="ea-activity-icon bg-success-subtle text-success">
+                    <i class="bi bi-hdd-network"></i>
+                  </div>
+                  <div class="ea-activity-content">
+                    <div class="ea-activity-title">New inbox connected</div>
+                    <div class="small text-muted mb-1">support@company.com via Gmail API</div>
+                    <div class="ea-activity-time">1 hour ago</div>
+                  </div>
+                </div>
+                <div class="ea-activity-item p-3">
+                  <div class="ea-activity-icon bg-info-subtle text-info">
+                    <i class="bi bi-chat-left-text"></i>
+                  </div>
+                  <div class="ea-activity-content">
+                    <div class="ea-activity-title">Prompt library updated</div>
+                    <div class="small text-muted mb-1">2 prompts modified by admin@company.com</div>
+                    <div class="ea-activity-time">3 hours ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Custom Scripts -->
+  <script>
+    // Sidebar Toggle
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('ea-sidebar-collapsed');
+    });
+    
+    // Mobile Sidebar Toggle
+    document.getElementById('sidebarToggleMobile').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('show');
+      document.getElementById('sidebarBackdrop').classList.toggle('show');
+    });
+    
+    // Close sidebar when clicking backdrop
+    document.getElementById('sidebarBackdrop').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.remove('show');
+      document.getElementById('sidebarBackdrop').classList.remove('show');
+    });
+    
+    // Initialize performance chart
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [
+            {
+              label: 'Emails Processed',
+              data: [65, 78, 52, 91, 43, 23, 36],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'Auto-Replies',
+              data: [42, 55, 33, 74, 29, 15, 22],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.3,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                drawBorder: false,
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
