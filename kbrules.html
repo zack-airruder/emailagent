@@ -139,6 +139,17 @@
             </div>
           </div>
         </div>
+        <div class="col-lg-6">
+          <div class="ea-card h-100">
+            <div class="ea-card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Keyword Blocking</h5>
+                <button class="ea-btn ea-btn-outline-primary ea-btn-sm" id="addKeywordBtn">+ Add</button>
+              </div>
+              <div id="keywordList" class="d-flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
           <!-- Tone & Policy -->
           <div class="col-lg-6 d-flex flex-column gap-3">
             <div class="ea-card">
@@ -174,6 +185,17 @@
                   <label class="form-label fw-semibold">Max auto-sends per mailbox per hour</label>
                   <input type="number" id="rateLimit" class="form-control" value="50" min="1"/>
                 </div>
+              </div>
+            </div>
+            <div class="ea-card">
+              <div class="ea-card-body">
+                <h5 class="mb-3">Sentiment Analysis</h5>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Negative Sentiment Threshold</label>
+                  <input type="number" id="sentimentThreshold" class="form-control" value="-0.5" step="0.1" min="-1" max="1"/>
+                  <div class="form-text">Responses with sentiment below this value will be flagged. (-1 to 1)</div>
+                </div>
+                <div id="sentimentResult" class="mt-2"></div>
               </div>
             </div>
           </div>
@@ -215,6 +237,19 @@
     </div>
   </div>
 
+  <!-- Keyword Modal -->
+  <div class="modal fade" id="keywordModal" tabindex="-1">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Add Keyword</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <input id="keywordText" class="form-control mb-3" placeholder="Enter keyword"/>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button id="saveKeywordBtn" class="btn btn-success">Save</button></div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const phraseListEl = document.getElementById('phraseList');
@@ -240,6 +275,28 @@
     });
     renderPhrases();
 
+    const keywordListEl = document.getElementById('keywordList');
+    const keywordModal = new bootstrap.Modal(document.getElementById('keywordModal'));
+    const keywords = [
+      "confidential",
+      "proprietary"
+    ];
+
+    function renderKeywords(){
+      keywordListEl.innerHTML = keywords.map((k,i)=>`
+        <span class="tag-chip bg-danger text-white">
+          ${k}
+          <span class="remove" onclick="removeKeyword(${i})">×</span>
+        </span>`).join('');
+    }
+    function removeKeyword(i){ keywords.splice(i,1); renderKeywords(); }
+    document.getElementById('addKeywordBtn').addEventListener('click',()=>{ document.getElementById('keywordText').value=""; keywordModal.show(); });
+    document.getElementById('saveKeywordBtn').addEventListener('click',()=>{
+      const t=document.getElementById('keywordText').value.trim(); if(!t)return;
+      keywords.push(t); renderKeywords(); keywordModal.hide();
+    });
+    renderKeywords();
+
     document.getElementById('runGuardrailTest').addEventListener('click',()=>{
       const text=document.getElementById('testDraft').value;
       let result=text;
@@ -252,7 +309,7 @@
         }
       });
       if(document.getElementById('noPII').checked){
-        const piiRegex=/(\\d{3}[-\\.\\s]?\\d{3}[-\\.\\s]?\\d{4}|[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,})/g;
+        const piiRegex=/(\\b(?:\\d{3}[-.\\s]?\\d{3}[-.\\s]?\\d{4}|\\(\\d{3}\\)[-.\\s]?\\d{3}[-.\\s]?\\d{4})\\b|[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,}|\\b\\d{3}-\\d{2}-\\d{4}\\b|\\b(?:\\d{4}[ -]?){3}\\d{4}\\b)/gi;
         if(piiRegex.test(result)){
           result=result.replace(piiRegex,m=>`<span class="highlight-block">${m}</span>`);
           issues.push("BLOCK: PII detected");
@@ -264,7 +321,33 @@
         if(+num>refundLimit){ issues.push(`BLOCK: Refund ${num}% > ${refundLimit}%`); return `<span class="highlight-block">${m}</span>`; }
         return m;
       });
+      const sentimentThreshold = parseFloat(document.getElementById('sentimentThreshold').value);
+      const sentimentScore = analyzeSentiment(text); // Placeholder for actual sentiment analysis
+      document.getElementById('sentimentResult').innerText = `Sentiment Score: ${sentimentScore.toFixed(2)}`;
+
+      if (sentimentScore < sentimentThreshold) {
+        issues.push(`WARN: Negative sentiment (${sentimentScore.toFixed(2)}) below threshold (${sentimentThreshold.toFixed(2)})`);
+        result = `<span class="highlight-warn">${result}</span>`;
+      }
+
+      keywords.forEach(k => {
+        const regex = new RegExp(`\\b${k}\\b`, 'gi');
+        if (regex.test(result)) {
+          issues.push(`BLOCK: Keyword "${k}" detected`);
+          result = result.replace(regex, m => `<span class="highlight-block">${m}</span>`);
+        }
+      });
+
       document.getElementById('testResult').innerHTML=issues.length?`<div><strong>Issues:</strong><br>${issues.join("<br>")}</div><hr>${result}`:`<span class="text-success">Pass – no guardrail issues.</span><hr>${result}`;
+    });
+
+    // Placeholder for sentiment analysis function
+    function analyzeSentiment(text) {
+      // In a real application, this would call an NLP API or a local model
+      // For demonstration, return a random sentiment score
+      return Math.random() * 2 - 1; // Returns a value between -1 and 1
+    }
+  </script>
     });
   </script>
 <script>
