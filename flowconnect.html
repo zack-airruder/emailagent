@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Email Agent — Connector Flow Builder</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawflow@0.0.52/dist/drawflow.min.css"/>
+<style>
+  html,body{font-family:'Inter',sans-serif!important;background:#f2f5fa;}
+  .navbar{background:#3b82f6!important;color:#fff}
+  .navbar .navbar-brand,.navbar .nav-link{color:#fff!important;font-weight:600}
+  .btn{border:none;border-radius:2rem;font-weight:600}
+  .btn-primary{background:#3b82f6!important}
+  .btn-outline-primary{background:#e5ecfb!important;color:#3b82f6!important}
+  .btn-outline-dark{background:#e5e7eb!important;color:#22223b!important}
+  .btn-success{background:#22c55e!important}
+  .card{background:#f7f9fc!important;border:none;border-radius:1rem!important;box-shadow:0 0 10px rgba(0,0,0,.04)!important}
+  .card-body{padding:1.1rem 1.3rem}
+  .kpi{background:#fff;border:1px solid #e5e7eb;border-radius:.9rem;padding:.7rem 1rem}
+  .kpi .value{font-weight:800}
+  .palette .list-group-item{border:1px dashed #cbd5e1;background:#fff;border-radius:.75rem;cursor:grab}
+  #drawflow{height:70vh;min-height:460px;background:#ffffff;border:2px dashed #cbd5e1;border-radius:.9rem}
+  .drawflow .drawflow-node{background:#fff;border:1px solid #e0e7ef;border-radius:.8rem;box-shadow:none}
+  .drawflow .drawflow-node.selected{outline:2px solid #3b82f6}
+  .node-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef2f7;padding:.5rem .65rem}
+  .node-title{font-weight:700;display:flex;align-items:center;gap:.45rem}
+  .node-body{padding:.55rem .65rem}
+  .chip{display:inline-block;padding:.15rem .5rem;background:#e5ecfb;color:#3b82f6;border-radius:2rem;font-size:.75rem;font-weight:600;margin-right:.3rem;margin-bottom:.25rem}
+  .port-badges{display:flex;flex-wrap:wrap;gap:.25rem}
+  .badge-port{border-radius:2rem;font-size:.68rem;font-weight:700}
+  .port-then,.port-pass,.port-approved,.port-sent,.port-next{background:#def7ec;color:#2563eb}
+  .port-else,.port-block,.port-rejected,.port-error{background:#fde68a;color:#b45309}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+  .box{background:#0b1220;color:#e2e8f0;border-radius:.6rem;padding:.75rem;font-size:.85rem;max-height:260px;overflow:auto}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Email Agent</a>
+    <div class="ms-auto d-flex gap-2">
+      <button class="btn btn-outline-primary" id="btnExport"><i class="bi bi-box-arrow-down"></i> Export JSON</button>
+      <button class="btn btn-primary" id="btnValidate"><i class="bi bi-shield-check"></i> Validate</button>
+      <button class="btn btn-success" id="btnSimulate"><i class="bi bi-play-fill"></i> Simulate</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container pb-5">
+  <div class="row g-3">
+    <div class="col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="mb-2">Palette</h5>
+          <div class="small text-muted mb-2">Drag into the canvas, then link ports.</div>
+          <div id="palette" class="palette list-group">
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="Start">
+              <span><i class="bi bi-play-fill me-2"></i>Start</span><span class="badge bg-dark text-white">Entry</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="GenerateDraft">
+              <span><i class="bi bi-file-earmark-text me-2"></i>Generate Draft</span><span class="badge bg-info text-dark">Prompt</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="RunGuardrails">
+              <span><i class="bi bi-shield-lock me-2"></i>Run Guardrails</span><span class="badge bg-warning text-dark">Safety</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="If">
+              <span><i class="bi bi-diagram-3 me-2"></i>If / Else</span><span class="badge bg-warning text-dark">Branch</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="RequireApproval">
+              <span><i class="bi bi-person-check me-2"></i>Require Approval</span><span class="badge bg-secondary">Human</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="SendEmail">
+              <span><i class="bi bi-send me-2"></i>Send Email</span><span class="badge bg-success">Send</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="ApplyLabel">
+              <span><i class="bi bi-tag me-2"></i>Apply Label</span><span class="badge bg-dark text-white">Tag</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="MoveToQueue">
+              <span><i class="bi bi-inboxes me-2"></i>Move to Queue</span><span class="badge bg-primary">Route</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="Notify">
+              <span><i class="bi bi-bell me-2"></i>Notify</span><span class="badge bg-info text-dark">Alert</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center drag-drawflow" draggable="true" data-node="Join">
+              <span><i class="bi bi-arrow-90deg-right me-2"></i>Join</span><span class="badge bg-dark text-white">Merge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2">
+        <div class="col-6"><div class="kpi"><div class="small text-muted">Nodes</div><div class="value" id="kpiNodes">0</div></div></div>
+        <div class="col-6"><div class="kpi"><div class="small text-muted">Edges</div><div class="value" id="kpiEdges">0</div></div></div>
+      </div>
+
+      <div class="d-grid mt-2">
+        <button id="btnLoadExample" class="btn btn-outline-primary btn-sm"><i class="bi bi-stars"></i> Load Example</button>
+        <button id="btnClear" class="btn btn-outline-dark btn-sm mt-1"><i class="bi bi-trash"></i> Clear</button>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Connector Canvas</h5>
+            <div class="d-flex gap-2">
+              <span class="chip">Ports: <span class="badge badge-port port-then">then/pass/approved/sent/next</span> <span class="badge badge-port port-else">else/block/rejected/error</span></span>
+            </div>
+          </div>
+          <div id="drawflow"></div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="card"><div class="card-body">
+            <h6 class="mb-2">Flow JSON</h6>
+            <pre id="jsonBox" class="box mono">{} </pre>
+          </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card"><div class="card-body">
+            <h6 class="mb-2">Simulation</h6>
+            <div class="small text-muted mb-1">Paste a sample event:</div>
+            <textarea id="simInput" class="form-control mb-2 mono" rows="10">{
+  "intent": "refund",
+  "subject": "Request refund ASAP",
+  "body": "Order A123 arrived damaged",
+  "amount": 50,
+  "vip": false,
+  "flagged": true
+}</textarea>
+            <button class="btn btn-primary btn-sm" id="runSim"><i class="bi bi-play-fill"></i> Run</button>
+            <pre id="simLogs" class="box mono mt-2" style="min-height:120px;">Logs…</pre>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Config Modal -->
+<div class="modal fade" id="cfgModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Configure Node</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="cfgBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-dark" id="btnDelNode">Delete</button>
+        <button class="btn btn-success" id="btnSaveNode">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/drawflow@0.0.52/dist/drawflow.min.js"></script>
+<script>
+/* ===== Catalogs ===== */
+const PROMPTS=[{id:'p1',title:'Return Policy Inquiry'},{id:'p2',title:'Shipping Delay Update'},{id:'p3',title:'Order Confirmation'},{id:'p4',title:'VIP Outreach'}];
+const QUEUES=['Support','Billing','VIP'];
+
+/* ===== Drawflow init ===== */
+const editor = new Drawflow(document.getElementById('drawflow'));
+editor.reroute = true;
+editor.start();
+const cfgModal = new bootstrap.Modal(document.getElementById('cfgModal'));
+let editingNodeId = null;
+
+/* Bind dragover/drop to the actual precanvas to ensure proper hit-testing */
+editor.precanvas.addEventListener('dragover', ev => ev.preventDefault());
+editor.precanvas.addEventListener('drop', handleDrop);
+/* Fallback on container (some browsers bubble differently) */
+editor.container.addEventListener('dragover', ev => ev.preventDefault());
+editor.container.addEventListener('drop', handleDrop);
+
+/* ===== Palette DnD ===== */
+document.querySelectorAll('.drag-drawflow').forEach(el=>{
+  el.addEventListener('dragstart', ev=>{
+    const type = el.getAttribute('data-node');
+    /* dataTransfer key fallback for Safari/Firefox */
+    ev.dataTransfer.setData('text/plain', type);
+    ev.dataTransfer.setData('node', type);
+  });
+});
+
+function handleDrop(ev){
+  ev.preventDefault();
+  const type = ev.dataTransfer.getData('node') || ev.dataTransfer.getData('text/plain');
+  if(!type) return;
+  /* Correct coordinates: relative to precanvas, divide by zoom */
+  const prec = editor.precanvas.getBoundingClientRect();
+  const x = (ev.clientX - prec.left) / editor.zoom;
+  const y = (ev.clientY - prec.top) / editor.zoom;
+  addNode(type, x, y);
+}
+
+/* ===== Node definitions ===== */
+const NODE_DEF = {
+  Start:{inputs:0, outputs:1, ports:{out:['next']}},
+  GenerateDraft:{inputs:1, outputs:1, ports:{out:['next']}},
+  RunGuardrails:{inputs:1, outputs:2, ports:{out:['pass','block']}},
+  If:{inputs:1, outputs:2, ports:{out:['then','else']}},
+  RequireApproval:{inputs:1, outputs:2, ports:{out:['approved','rejected']}},
+  SendEmail:{inputs:1, outputs:2, ports:{out:['sent','error']}},
+  ApplyLabel:{inputs:1, outputs:1, ports:{out:['next']}},
+  MoveToQueue:{inputs:1, outputs:1, ports:{out:['next']}},
+  Notify:{inputs:1, outputs:1, ports:{out:['next']}},
+  Join:{inputs:2, outputs:1, ports:{out:['next']}}
+};
+const DEFAULT_DATA = {
+  Start:{},
+  GenerateDraft:{promptId:'p1', mailbox:'support@shopnow.com'},
+  RunGuardrails:{mode:'standard'},
+  If:{conditions:[{field:'intent',op:'equals',value:'refund'}]},
+  RequireApproval:{queue:'Support'},
+  SendEmail:{from:'support@shopnow.com'},
+  ApplyLabel:{labels:'AI-draft'},
+  MoveToQueue:{queue:'Support'},
+  Notify:{channel:'email', target:'ops@shopnow.com', message:'Run complete'},
+  Join:{mode:'any'}
+};
+
+/* ===== Node creation ===== */
+function addNode(type,x,y){
+  const def = NODE_DEF[type]; if(!def) return;
+  const data = structuredClone(DEFAULT_DATA[type]||{});
+  const html = renderNodeHtml(type, data);
+  editor.addNode(type, def.inputs, def.outputs, x, y, type, data, html);
+}
+
+/* ===== Node HTML / summary ===== */
+function icon(t){return({Start:'bi-play-fill',GenerateDraft:'bi-file-earmark-text',RunGuardrails:'bi-shield-lock',If:'bi-diagram-3',RequireApproval:'bi-person-check',SendEmail:'bi-send',ApplyLabel:'bi-tag',MoveToQueue:'bi-inboxes',Notify:'bi-bell',Join:'bi-arrow-90deg-right'})[t]||'bi-square';}
+function portBadges(t){return NODE_DEF[t].ports.out.map(n=>`<span class="badge badge-port ${['then','pass','approved','sent','next'].includes(n)?'port-then':'port-else'}">${n}</span>`).join('');}
+function idToTitle(arr,id){return (arr.find(x=>x.id===id)||{}).title||id;}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
+function summary(t,d){
+  switch(t){
+    case 'GenerateDraft': return `<span class="chip">Prompt: ${idToTitle(PROMPTS,d.promptId)}</span><span class="chip">From: ${d.mailbox}</span>`;
+    case 'RunGuardrails': return `<span class="chip">Mode: ${d.mode}</span>`;
+    case 'If': return (d.conditions||[]).map(c=>`<span class="chip">${c.field} ${c.op} ${esc(c.value)}</span>`).join('')||'<span class="chip">No conditions</span>';
+    case 'RequireApproval': return `<span class="chip">Queue: ${d.queue}</span>`;
+    case 'SendEmail': return `<span class="chip">From: ${d.from}</span>`;
+    case 'ApplyLabel': return `<span class="chip">Labels: ${d.labels}</span>`;
+    case 'MoveToQueue': return `<span class="chip">Queue: ${d.queue}</span>`;
+    case 'Notify': return `<span class="chip">Channel: ${d.channel}</span><span class="chip">Target: ${d.target}</span>`;
+    case 'Join': return `<span class="chip">Mode: ${d.mode}</span>`;
+    default: return '';
+  }
+}
+function renderNodeHtml(t,d){
+  return `
+    <div class="node-head">
+      <div class="node-title"><i class="bi ${icon(t)}"></i><span>${t}</span></div>
+      <button class="btn btn-outline-primary btn-sm" onclick="openCfg(this)">Configure</button>
+    </div>
+    <div class="node-body">
+      ${summary(t,d)}
+      <div class="port-badges mt-1">${portBadges(t)}</div>
+    </div>`;
+}
+
+window.openCfg = function(btn){
+  const nodeEl = btn.closest('.drawflow-node'); editingNodeId = +nodeEl.dataset.id;
+  const n = editor.getNodeFromId(editingNodeId);
+  document.getElementById('cfgBody').innerHTML = renderCfgForm(n);
+  cfgModal.show();
+};
+
+function renderCfgForm(n){
+  const t=n.name,d=n.data||{};
+  if(t==='GenerateDraft') return `
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Prompt</label>
+        <select id="f_prompt" class="form-select">${PROMPTS.map(p=>`<option value="${p.id}" ${d.promptId===p.id?'selected':''}>${p.title}</option>`).join('')}</select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Mailbox</label>
+        <select id="f_mailbox" class="form-select">
+          <option ${d.mailbox==='support@shopnow.com'?'selected':''}>support@shopnow.com</option>
+          <option ${d.mailbox==='billing@shopnow.com'?'selected':''}>billing@shopnow.com</option>
+          <option ${d.mailbox==='no-reply@shopnow.com'?'selected':''}>no-reply@shopnow.com</option>
+        </select>
+      </div>
+    </div>`;
+  if(t==='RunGuardrails') return `<label class="form-label">Mode</label><select id="f_mode" class="form-select"><option value="standard" ${d.mode==='standard'?'selected':''}>standard</option><option value="strict" ${d.mode==='strict'?'selected':''}>strict</option></select>`;
+  if(t==='If'){
+    const row = (c,i)=>`<div class="row g-2 align-items-center mb-2 cond" data-i="${i}">
+      <div class="col-md-4"><select class="form-select c-field">${['intent','subject','body','amount','vip','flagged'].map(f=>`<option ${c.field===f?'selected':''}>${f}</option>`).join('')}</select></div>
+      <div class="col-md-4"><select class="form-select c-op">${['equals','contains','gt','lt','isTrue','isFalse'].map(op=>`<option ${c.op===op?'selected':''}>${op}</option>`).join('')}</select></div>
+      <div class="col-md-3"><input class="form-control c-val" value="${c.value??''}" placeholder="value"/></div>
+      <div class="col-md-1 text-end"><button class="btn btn-outline-dark btn-sm" onclick="this.closest('.cond').remove()">✕</button></div>
+    </div>`;
+    return `<div class="small text-muted mb-2">AND conditions. Fields: <code>intent, subject, body, amount, vip, flagged</code></div>
+      <div id="condBox">${(d.conditions||[{field:'intent',op:'equals',value:'refund'}]).map(row).join('')}</div>
+      <button class="btn btn-outline-dark btn-sm mt-2" onclick="document.getElementById('condBox').insertAdjacentHTML('beforeend', \`${row({field:'intent',op:'equals',value:''},Date.now())}\`)">+ Add Condition</button>`;
+  }
+  if(t==='RequireApproval') return `<label class="form-label">Queue</label><select id="f_queue" class="form-select">${QUEUES.map(q=>`<option ${d.queue===q?'selected':''}>${q}</option>`).join('')}</select>`;
+  if(t==='SendEmail') return `<label class="form-label">From</label><select id="f_from" class="form-select"><option ${d.from==='support@shopnow.com'?'selected':''}>support@shopnow.com</option><option ${d.from==='billing@shopnow.com'?'selected':''}>billing@shopnow.com</option><option ${d.from==='no-reply@shopnow.com'?'selected':''}>no-reply@shopnow.com</option></select>`;
+  if(t==='ApplyLabel') return `<label class="form-label">Labels</label><input id="f_labels" class="form-control" value="${d.labels||''}"/>`;
+  if(t==='MoveToQueue') return `<label class="form-label">Queue</label><select id="f_mqueue" class="form-select">${QUEUES.map(q=>`<option ${d.queue===q?'selected':''}>${q}</option>`).join('')}</select>`;
+  if(t==='Notify') return `<div class="row g-2">
+      <div class="col-md-4"><label class="form-label">Channel</label><select id="f_channel" class="form-select"><option ${d.channel==='email'?'selected':''}>email</option><option ${d.channel==='webhook'?'selected':''}>webhook</option></select></div>
+      <div class="col-md-8"><label class="form-label">Target</label><input id="f_target" class="form-control" value="${d.target||''}"/></div>
+      <div class="col-12"><label class="form-label">Message</label><input id="f_message" class="form-control" value="${d.message||''}"/></div>
+    </div>`;
+  if(t==='Join') return `<label class="form-label">Mode</label><select id="f_join" class="form-select"><option value="any" ${d.mode==='any'?'selected':''}>Proceed when ANY input arrives</option><option value="all" ${d.mode==='all'?'selected':''}>Proceed when ALL inputs arrive</option></select>`;
+  return `<div class="small text-muted">No configuration</div>`;
+}
+
+document.getElementById('btnSaveNode').addEventListener('click', ()=>{
+  const id = editingNodeId; if(!id) return;
+  const node = editor.getNodeFromId(id); const t=node.name; const d={...node.data};
+  if(t==='GenerateDraft'){ d.promptId=document.getElementById('f_prompt').value; d.mailbox=document.getElementById('f_mailbox').value; }
+  if(t==='RunGuardrails'){ d.mode=document.getElementById('f_mode').value; }
+  if(t==='If'){ d.conditions = Array.from(document.querySelectorAll('#condBox .cond')).map(r=>({field:r.querySelector('.c-field').value, op:r.querySelector('.c-op').value, value:r.querySelector('.c-val').value})); }
+  if(t==='RequireApproval'){ d.queue=document.getElementById('f_queue').value; }
+  if(t==='SendEmail'){ d.from=document.getElementById('f_from').value; }
+  if(t==='ApplyLabel'){ d.labels=document.getElementById('f_labels').value; }
+  if(t==='MoveToQueue'){ d.queue=document.getElementById('f_mqueue').value; }
+  if(t==='Notify'){ d.channel=document.getElementById('f_channel').value; d.target=document.getElementById('f_target').value; d.message=document.getElementById('f_message').value; }
+  if(t==='Join'){ d.mode=document.getElementById('f_join').value; }
+
+  editor.updateNodeDataFromId(id,d);
+  const el = document.querySelector(`.drawflow-node[data-id="${id}"] .node-body`);
+  if(el) el.innerHTML = `${summary(t,d)}<div class="port-badges mt-1">${portBadges(t)}</div>`;
+  cfgModal.hide(); refreshStats(); refreshJson();
+});
+document.getElementById('btnDelNode').addEventListener('click', ()=>{
+  const id = editingNodeId; cfgModal.hide(); if(id) editor.removeNodeId(id);
+  refreshStats(); refreshJson();
+});
+
+/* ===== Stats / JSON ===== */
+function refreshStats(){
+  const data = editor.export();
+  const nodes = Object.keys(data.drawflow.Home?.data||{}).length;
+  let edges=0; Object.values(data.drawflow.Home?.data||{}).forEach(n=>Object.values(n.outputs||{}).forEach(o=>edges+=(o.connections||[]).length));
+  document.getElementById('kpiNodes').textContent = nodes;
+  document.getElementById('kpiEdges').textContent = edges;
+}
+function refreshJson(){ document.getElementById('jsonBox').textContent = JSON.stringify(editor.export(), null, 2); }
+
+/* ===== Validation ===== */
+function validateFlow(){
+  const issues=[]; const data=editor.export().drawflow.Home?.data||{}; const ids=Object.keys(data);
+  const starts = ids.filter(id=>data[id].name==='Start');
+  if(starts.length===0) issues.push('No Start node'); if(starts.length>1) issues.push('Multiple Start nodes');
+  ids.forEach(id=>{
+    const n=data[id];
+    if(['If','RunGuardrails','RequireApproval','SendEmail'].includes(n.name)){
+      const o1=n.outputs['output_1']?.connections?.length||0, o2=n.outputs['output_2']?.connections?.length||0;
+      if(o1===0) issues.push(`${n.name} (#${id}) output_1 not connected`);
+      if(o2===0) issues.push(`${n.name} (#${id}) output_2 not connected`);
+    }
+    if(n.name==='Join'){
+      const i1=n.inputs['input_1']?.connections?.length||0, i2=n.inputs['input_2']?.connections?.length||0;
+      if(i1===0 || i2===0) issues.push(`Join (#${id}) expects 2 inputs`);
+    }
+  });
+  return issues;
+}
+
+/* ===== Simulation ===== */
+function evalConds(conds, ctx){
+  return (conds||[]).every(c=>{
+    const val=ctx[c.field];
+    switch(c.op){
+      case 'equals': return String(val)===String(c.value);
+      case 'contains': return String(val||'').toLowerCase().includes(String(c.value||'').toLowerCase());
+      case 'gt': return Number(val)>Number(c.value);
+      case 'lt': return Number(val)<Number(c.value);
+      case 'isTrue': return !!val===true;
+      case 'isFalse': return !!val===false;
+      default: return false;
+    }
+  });
+}
+function simulate(){
+  const out=[]; const data=editor.export().drawflow.Home?.data||{}; const ids=Object.keys(data);
+  const startId = ids.find(id=>data[id].name==='Start');
+  if(!startId){ out.push('No Start node.'); return out.join('\n'); }
+  let ctx={}; try{ ctx=JSON.parse(document.getElementById('simInput').value||'{}'); }catch{ return 'Invalid JSON input'; }
+
+  function step(id){
+    const n=data[id]; if(!n) return null;
+    const t=n.name,d=n.data||{}; out.push(`Node #${id} → ${t}`);
+    if(t==='Start') return n.outputs.output_1?.connections?.[0]?.node||null;
+    if(t==='GenerateDraft'){ out.push(`  GenerateDraft prompt=${d.promptId} from=${d.mailbox}`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    if(t==='RunGuardrails'){ const pass = d.mode==='standard' ? !ctx.flagged : (!ctx.flagged && (Number(ctx.amount)<100)); out.push(`  Guardrails mode=${d.mode} → ${pass?'pass':'block'}`); return n.outputs[pass?'output_1':'output_2']?.connections?.[0]?.node||null; }
+    if(t==='If'){ const ok=evalConds(d.conditions,ctx); out.push(`  If → ${ok?'then':'else'}`); return n.outputs[ok?'output_1':'output_2']?.connections?.[0]?.node||null; }
+    if(t==='RequireApproval'){ const approved = ctx.vip?false:true; out.push(`  RequireApproval queue=${d.queue} → ${approved?'approved':'rejected'}`); return n.outputs[approved?'output_1':'output_2']?.connections?.[0]?.node||null; }
+    if(t==='SendEmail'){ out.push(`  SendEmail from=${d.from} → sent`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    if(t==='ApplyLabel'){ out.push(`  ApplyLabel ${d.labels}`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    if(t==='MoveToQueue'){ out.push(`  MoveToQueue ${d.queue}`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    if(t==='Notify'){ out.push(`  Notify ${d.channel}:${d.target} ${d.message}`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    if(t==='Join'){ out.push(`  Join mode=${d.mode}`); return n.outputs.output_1?.connections?.[0]?.node||null; }
+    return null;
+  }
+  let current=startId, visited=new Set(), hops=0;
+  while(current && hops<200){ if(visited.has(current)){ out.push(`Loop detected at #${current}`); break; } visited.add(current); current=step(current); hops++; }
+  if(!current) out.push('Simulation complete.');
+  return out.join('\n');
+}
+
+/* ===== Export / Buttons ===== */
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(editor.export(), null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='connector_flow.json'; a.click(); URL.revokeObjectURL(url);
+});
+document.getElementById('btnValidate').addEventListener('click', ()=> {
+  const issues = validateFlow();
+  alert(issues.length?('Issues:\n- '+issues.join('\n- ')):'Flow valid ✅');
+});
+document.getElementById('btnSimulate').addEventListener('click', ()=> document.getElementById('runSim').click());
+document.getElementById('runSim').addEventListener('click', ()=> { document.getElementById('simLogs').textContent = simulate(); });
+document.getElementById('btnClear').addEventListener('click', ()=>{ editor.clear(); refreshStats(); refreshJson(); });
+
+/* Robust “add & get id” helper: diff model before/after */
+function addAndGetId(type,x,y,patch={}){
+  const before = new Set(Object.keys(editor.export().drawflow.Home?.data||{}));
+  const def=NODE_DEF[type]; const base=structuredClone(DEFAULT_DATA[type]||{}); Object.assign(base,patch);
+  editor.addNode(type,def.inputs,def.outputs,x,y,type,base,renderNodeHtml(type,base));
+  const after = Object.keys(editor.export().drawflow.Home?.data||{});
+  return after.find(id=>!before.has(id));
+}
+function connect(from,out,to,input){ editor.addConnection(from,out,to,input); }
+
+document.getElementById('btnLoadExample').addEventListener('click', ()=>{
+  editor.clear();
+  const s = addAndGetId('Start',80,120);
+  const ifn = addAndGetId('If',320,120,{conditions:[{field:'intent',op:'equals',value:'refund'},{field:'subject',op:'contains',value:'ASAP'}]});
+  const g1 = addAndGetId('GenerateDraft',560,40,{promptId:'p1',mailbox:'support@shopnow.com'});
+  const grd = addAndGetId('RunGuardrails',780,40,{mode:'strict'});
+  const apr = addAndGetId('RequireApproval',1000,40,{queue:'Billing'});
+  const sendA = addAndGetId('SendEmail',1220,40,{from:'support@shopnow.com'});
+  const g2 = addAndGetId('GenerateDraft',560,220,{promptId:'p2',mailbox:'support@shopnow.com'});
+  const grd2 = addAndGetId('RunGuardrails',780,220,{mode:'standard'});
+  const sendB = addAndGetId('SendEmail',1000,220,{from:'support@shopnow.com'});
+  connect(s,'output_1',ifn,'input_1');
+  connect(ifn,'output_1',g1,'input_1');  connect(ifn,'output_2',g2,'input_1');
+  connect(g1,'output_1',grd,'input_1');  connect(grd,'output_1',apr,'input_1');  connect(apr,'output_1',sendA,'input_1');
+  connect(g2,'output_1',grd2,'input_1'); connect(grd2,'output_1',sendB,'input_1');
+  refreshStats(); refreshJson();
+});
+
+/* Keep JSON/stats fresh */
+['nodeCreated','nodeRemoved','connectionCreated','connectionRemoved','nodeDataChanged'].forEach(evt=>{
+  editor.on(evt, ()=>{ refreshStats(); refreshJson(); });
+});
+refreshStats(); refreshJson();
+</script>
+</body>
+</html>
