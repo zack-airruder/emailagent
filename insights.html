@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Insights - Email Agent</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .insights-metric-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .insights-metric-card.secondary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    .insights-metric-card.success {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    .insights-metric-card.warning {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .metric-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .metric-change {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .chart-container {
+      position: relative;
+      height: 350px;
+      margin-bottom: 2rem;
+    }
+    .insights-table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .performance-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .performance-excellent { background: #d1fae5; color: #065f46; }
+    .performance-good { background: #dbeafe; color: #1e40af; }
+    .performance-average { background: #fef3c7; color: #92400e; }
+    .performance-poor { background: #fee2e2; color: #991b1b; }
+    .trend-up { color: #10b981; }
+    .trend-down { color: #ef4444; }
+    .trend-stable { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="ea-wrapper">
+    <!-- Sidebar -->
+    <aside class="ea-sidebar">
+      <div class="ea-sidebar-header">
+        <a href="index.html" class="ea-sidebar-brand">
+          <i class="bi bi-envelope-paper"></i>
+          <span>Email Agent</span>
+        </a>
+        <button class="ea-sidebar-toggle d-lg-none" id="sidebarClose">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <ul class="ea-sidebar-menu">
+        <li class="ea-sidebar-item">
+          <a href="index.html" class="ea-sidebar-link">
+            <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="inbox.html" class="ea-sidebar-link">
+            <i class="bi bi-inbox ea-sidebar-icon"></i>
+            <span>Inbox</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="reply-batches.html" class="ea-sidebar-link">
+            <i class="bi bi-collection ea-sidebar-icon"></i>
+            <span>Reply Batches</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="automation.html" class="ea-sidebar-link">
+            <i class="bi bi-lightning ea-sidebar-icon"></i>
+            <span>Automation Rules</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="flowconnect.html" class="ea-sidebar-link">
+            <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+            <span>Workflow Builder</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="promptlib.html" class="ea-sidebar-link">
+            <i class="bi bi-chat-left-text ea-sidebar-icon"></i>
+            <span>Prompt Library</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="kbrules.html" class="ea-sidebar-link">
+            <i class="bi bi-shield-check ea-sidebar-icon"></i>
+            <span>Guardrails</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="task.html" class="ea-sidebar-link">
+            <i class="bi bi-people ea-sidebar-icon"></i>
+            <span>Human Agents</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="insights.html" class="ea-sidebar-link active">
+            <i class="bi bi-graph-up ea-sidebar-icon"></i>
+            <span>Data Insights</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="connect-mailbox.html" class="ea-sidebar-link">
+            <i class="bi bi-gear ea-sidebar-icon"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-question-circle ea-sidebar-icon"></i>
+            <span>Help & Support</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Sidebar Backdrop -->
+    <div class="ea-sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Content -->
+    <main class="ea-main">
+      <!-- Header -->
+      <header class="ea-header">
+        <div class="d-flex align-items-center">
+          <button class="ea-sidebar-toggle d-lg-none me-3" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <h1 class="ea-header-title mb-0">Data Insights</h1>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="dropdown">
+            <button class="btn ea-btn ea-btn-light dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Last 30 Days
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+              <li><a class="dropdown-item" href="#" onclick="updateTimeRange('today')">Today</a></li>
+              <li><a class="dropdown-item" href="#" onclick="updateTimeRange('7days')">Last 7 Days</a></li>
+              <li><a class="dropdown-item active" href="#" onclick="updateTimeRange('30days')">Last 30 Days</a></li>
+              <li><a class="dropdown-item" href="#" onclick="updateTimeRange('90days')">Last 90 Days</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="updateTimeRange('custom')">Custom Range</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <button class="btn ea-btn ea-btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              <span>Admin</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="ea-content">
+        <!-- Key Metrics Overview -->
+        <div class="row g-4 mb-4">
+          <div class="col-lg-3 col-md-6">
+            <div class="insights-metric-card">
+              <div class="metric-value">15,847</div>
+              <div class="metric-label">Total Emails Processed</div>
+              <div class="metric-change">
+                <i class="bi bi-arrow-up trend-up"></i> +12.5% from last month
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="insights-metric-card secondary">
+              <div class="metric-value">94.2%</div>
+              <div class="metric-label">Automation Success Rate</div>
+              <div class="metric-change">
+                <i class="bi bi-arrow-up trend-up"></i> +2.1% from last month
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="insights-metric-card success">
+              <div class="metric-value">2.3s</div>
+              <div class="metric-label">Avg Response Time</div>
+              <div class="metric-change">
+                <i class="bi bi-arrow-down trend-up"></i> -0.4s from last month
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="insights-metric-card warning">
+              <div class="metric-value">$2,847</div>
+              <div class="metric-label">Cost Savings</div>
+              <div class="metric-change">
+                <i class="bi bi-arrow-up trend-up"></i> +18.3% from last month
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+          <!-- Email Volume Trends -->
+          <div class="col-lg-8">
+            <div class="ea-card">
+              <div class="ea-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Email Volume & Processing Trends</h5>
+                <div class="btn-group" role="group">
+                  <input type="radio" class="btn-check" name="chartType" id="volumeChart" autocomplete="off" checked>
+                  <label class="btn btn-outline-primary btn-sm" for="volumeChart">Volume</label>
+                  <input type="radio" class="btn-check" name="chartType" id="responseChart" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="responseChart">Response Time</label>
+                  <input type="radio" class="btn-check" name="chartType" id="accuracyChart" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="accuracyChart">Accuracy</label>
+                </div>
+              </div>
+              <div class="ea-card-body">
+                <div class="chart-container">
+                  <canvas id="trendsChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Categories Distribution -->
+          <div class="col-lg-4">
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="mb-0">Email Categories</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="chart-container">
+                  <canvas id="categoriesChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Analytics -->
+        <div class="row g-4 mb-4">
+          <!-- Agent Performance Comparison -->
+          <div class="col-lg-6">
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="mb-0">AI vs Human Agent Performance</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="chart-container">
+                  <canvas id="performanceChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cost Analysis -->
+          <div class="col-lg-6">
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="mb-0">Cost Analysis & ROI</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="chart-container">
+                  <canvas id="costChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Analytics Tables -->
+        <div class="row g-4 mb-4">
+          <!-- Top Performing Automation Rules -->
+          <div class="col-lg-6">
+            <div class="ea-card">
+              <div class="ea-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Top Performing Automation Rules</h5>
+                <a href="automation.html" class="ea-link">View All Rules</a>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Rule Name</th>
+                        <th>Success Rate</th>
+                        <th>Emails Processed</th>
+                        <th>Avg Response Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="fw-medium">Customer Support Auto-Reply</div>
+                          <small class="text-muted">General inquiries</small>
+                        </td>
+                        <td><span class="performance-badge performance-excellent">98.5%</span></td>
+                        <td>4,231</td>
+                        <td>1.8s</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="fw-medium">Order Status Inquiry</div>
+                          <small class="text-muted">E-commerce orders</small>
+                        </td>
+                        <td><span class="performance-badge performance-excellent">97.2%</span></td>
+                        <td>2,847</td>
+                        <td>2.1s</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="fw-medium">Technical Support Triage</div>
+                          <small class="text-muted">Technical issues</small>
+                        </td>
+                        <td><span class="performance-badge performance-good">89.3%</span></td>
+                        <td>1,592</td>
+                        <td>3.2s</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="fw-medium">Billing Inquiries</div>
+                          <small class="text-muted">Payment & billing</small>
+                        </td>
+                        <td><span class="performance-badge performance-good">91.7%</span></td>
+                        <td>1,238</td>
+                        <td>2.7s</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="fw-medium">Product Information</div>
+                          <small class="text-muted">Product details</small>
+                        </td>
+                        <td><span class="performance-badge performance-average">85.4%</span></td>
+                        <td>892</td>
+                        <td>4.1s</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Human Agent Performance -->
+          <div class="col-lg-6">
+            <div class="ea-card">
+              <div class="ea-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Human Agent Performance</h5>
+                <a href="task.html" class="ea-link">Manage Agents</a>
+              </div>
+              <div class="ea-card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Agent</th>
+                        <th>Emails Handled</th>
+                        <th>Avg Response Time</th>
+                        <th>Customer Rating</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-2">SL</div>
+                            <div>
+                              <div class="fw-medium">Sarah Lee</div>
+                              <small class="text-muted">Customer Support</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>342</td>
+                        <td>4.2 min</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-1">4.9</span>
+                            <div class="text-warning">
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge bg-success">Active</span></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-2">MC</div>
+                            <div>
+                              <div class="fw-medium">Mike Chen</div>
+                              <small class="text-muted">Technical Support</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>287</td>
+                        <td>6.1 min</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-1">4.7</span>
+                            <div class="text-warning">
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-half"></i>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge bg-warning">Busy</span></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-2">EW</div>
+                            <div>
+                              <div class="fw-medium">Emma Wilson</div>
+                              <small class="text-muted">Sales Support</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>198</td>
+                        <td>3.8 min</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-1">4.8</span>
+                            <div class="text-warning">
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge bg-success">Active</span></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-2">JD</div>
+                            <div>
+                              <div class="fw-medium">John Davis</div>
+                              <small class="text-muted">Billing Support</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>156</td>
+                        <td>5.3 min</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="me-1">4.6</span>
+                            <div class="text-warning">
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-fill"></i>
+                              <i class="bi bi-star-half"></i>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="badge bg-secondary">Offline</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Health & Alerts -->
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="mb-0">System Health Monitoring</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <div class="text-center p-3 border rounded">
+                      <div class="h4 text-success mb-2">99.8%</div>
+                      <div class="small text-muted">System Uptime</div>
+                      <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: 99.8%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center p-3 border rounded">
+                      <div class="h4 text-primary mb-2">2.1s</div>
+                      <div class="small text-muted">Avg API Response</div>
+                      <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: 85%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center p-3 border rounded">
+                      <div class="h4 text-warning mb-2">78%</div>
+                      <div class="small text-muted">LLM Service Health</div>
+                      <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: 78%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="ea-card">
+              <div class="ea-card-header">
+                <h5 class="mb-0">Recent Alerts</h5>
+              </div>
+              <div class="ea-card-body">
+                <div class="d-flex align-items-start mb-3">
+                  <div class="flex-shrink-0">
+                    <div class="bg-warning rounded-circle p-2">
+                      <i class="bi bi-exclamation-triangle text-white"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <div class="fw-medium">High API Usage</div>
+                    <div class="small text-muted">LLM API at 85% of rate limit</div>
+                    <div class="small text-muted">2 hours ago</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-start mb-3">
+                  <div class="flex-shrink-0">
+                    <div class="bg-info rounded-circle p-2">
+                      <i class="bi bi-info-circle text-white"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <div class="fw-medium">New Mailbox Connected</div>
+                    <div class="small text-muted">hr@company.com successfully integrated</div>
+                    <div class="small text-muted">4 hours ago</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div class="flex-shrink-0">
+                    <div class="bg-success rounded-circle p-2">
+                      <i class="bi bi-check-circle text-white"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <div class="fw-medium">Batch Processing Complete</div>
+                    <div class="small text-muted">247 emails processed successfully</div>
+                    <div class="small text-muted">6 hours ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Core Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Sidebar Toggle Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.querySelector('.ea-sidebar');
+      const sidebarClose = document.getElementById('sidebarClose');
+      const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.add('show');
+          sidebarBackdrop.classList.add('show');
+        });
+      }
+      
+      if (sidebarClose) {
+        sidebarClose.addEventListener('click', function() {
+          sidebar.classList.remove('show');
+          sidebarBackdrop.classList.remove('show');
+        });
+      }
+      
+      if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', function() {
+          sidebar.classList.remove('show');
+          sidebarBackdrop.classList.remove('show');
+        });
+      }
+    });
+  </script>
+
+  <!-- Charts and Analytics Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Email Volume Trends Chart
+      const trendsCtx = document.getElementById('trendsChart');
+      if (trendsCtx) {
+        const trendsChart = new Chart(trendsCtx, {
+          type: 'line',
+          data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+            datasets: [{
+              label: 'Emails Received',
+              data: [1200, 1450, 1380, 1620, 1580, 1750],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4,
+              fill: true
+            }, {
+              label: 'Emails Processed',
+              data: [1180, 1420, 1350, 1590, 1560, 1720],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: '#f3f4f6'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Email Categories Pie Chart
+      const categoriesCtx = document.getElementById('categoriesChart');
+      if (categoriesCtx) {
+        new Chart(categoriesCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Customer Support', 'Sales Inquiries', 'Technical Issues', 'Billing', 'General Info', 'Other'],
+            datasets: [{
+              data: [35, 25, 15, 12, 8, 5],
+              backgroundColor: [
+                '#3b82f6',
+                '#10b981',
+                '#f59e0b',
+                '#ef4444',
+                '#8b5cf6',
+                '#6b7280'
+              ],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      }
+
+      // Performance Comparison Chart
+      const performanceCtx = document.getElementById('performanceChart');
+      if (performanceCtx) {
+        new Chart(performanceCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Response Time', 'Accuracy Rate', 'Customer Satisfaction', 'Cost per Email', 'Availability'],
+            datasets: [{
+              label: 'AI Agent',
+              data: [95, 94, 87, 98, 99],
+              backgroundColor: 'rgba(59, 130, 246, 0.8)',
+              borderColor: '#3b82f6',
+              borderWidth: 1
+            }, {
+              label: 'Human Agents',
+              data: [75, 98, 95, 45, 85],
+              backgroundColor: 'rgba(16, 185, 129, 0.8)',
+              borderColor: '#10b981',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                  color: '#f3f4f6'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Cost Analysis Chart
+      const costCtx = document.getElementById('costChart');
+      if (costCtx) {
+        new Chart(costCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Traditional Cost',
+              data: [8500, 8200, 8800, 9100, 8900, 9300],
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.4,
+              fill: true
+            }, {
+              label: 'AI-Assisted Cost',
+              data: [3200, 3100, 3400, 3600, 3500, 3700],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: '#f3f4f6'
+                },
+                ticks: {
+                  callback: function(value) {
+                    return '$' + value;
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+    });
+
+    // Time range update function
+    function updateTimeRange(range) {
+      const dropdown = document.getElementById('timeRangeDropdown');
+      const items = document.querySelectorAll('#timeRangeDropdown + .dropdown-menu .dropdown-item');
+      
+      // Remove active class from all items
+      items.forEach(item => item.classList.remove('active'));
+      
+      // Update button text and add active class
+      switch(range) {
+        case 'today':
+          dropdown.textContent = 'Today';
+          items[0].classList.add('active');
+          break;
+        case '7days':
+          dropdown.textContent = 'Last 7 Days';
+          items[1].classList.add('active');
+          break;
+        case '30days':
+          dropdown.textContent = 'Last 30 Days';
+          items[2].classList.add('active');
+          break;
+        case '90days':
+          dropdown.textContent = 'Last 90 Days';
+          items[3].classList.add('active');
+          break;
+        case 'custom':
+          dropdown.textContent = 'Custom Range';
+          items[5].classList.add('active');
+          // In a real app, this would open a date picker
+          break;
+      }
+      
+      console.log('Time range updated to:', range);
+      // In a real application, this would trigger data refresh
+    }
+  </script>
+</body>
+</html>
