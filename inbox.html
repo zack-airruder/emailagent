@@ -235,120 +235,222 @@
           <div class="col-lg-4 col-md-5 mb-4 mb-md-0">
             <div class="ea-card h-100 shadow-sm">
               <div class="ea-card-body d-flex flex-column">
+                <!-- Email Account Selector -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="ea-card-title mb-0">Inbox</h5>
+                  <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="emailAccountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-envelope me-1"></i>
+                      <span id="currentAccount">support@shopnow.com</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="emailAccountDropdown">
+                      <li><a class="dropdown-item" href="#" onclick="switchAccount('support@shopnow.com')">support@shopnow.com</a></li>
+                      <li><a class="dropdown-item" href="#" onclick="switchAccount('sales@shopnow.com')">sales@shopnow.com</a></li>
+                      <li><a class="dropdown-item" href="#" onclick="switchAccount('info@shopnow.com')">info@shopnow.com</a></li>
+                      <li><a class="dropdown-item" href="#" onclick="switchAccount('billing@shopnow.com')">billing@shopnow.com</a></li>
+                    </ul>
+                  </div>
                   <a href="task.html" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-check2-square me-1"></i> Tasks
+                    <i class="bi bi-people me-1"></i> Agents
                   </a>
                 </div>
-            <form class="mb-3">
-              <div class="input-group mb-2">
-                <input type="text" class="form-control" placeholder="Search inboxes...">
-                <button class="btn ea-btn-outline-secondary" type="button">
-                  <span class="bi bi-search"></span>
-                </button>
-              </div>
-              <div class="row g-2">
-                <div class="col-6">
-                  <select class="form-select" aria-label="Filter by tag">
-                    <option selected>All Tags</option>
-                    <option>Important</option>
-                    <option>Follow Up</option>
-                  </select>
+                
+                <!-- Inbox/Sent Tabs -->
+                <ul class="nav nav-tabs mb-3" id="inboxTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inbox-pane" type="button" role="tab" aria-controls="inbox-pane" aria-selected="true">
+                      <i class="bi bi-inbox me-1"></i> Inbox
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent-pane" type="button" role="tab" aria-controls="sent-pane" aria-selected="false">
+                      <i class="bi bi-send me-1"></i> Sent
+                    </button>
+                  </li>
+                </ul>
+                <!-- Tab Content -->
+                <div class="tab-content" id="inboxTabContent">
+                  <!-- Inbox Tab -->
+                  <div class="tab-pane fade show active" id="inbox-pane" role="tabpanel" aria-labelledby="inbox-tab">
+                    <form class="mb-3">
+                      <div class="input-group mb-2">
+                        <input type="text" class="form-control" placeholder="Search emails...">
+                        <button class="btn ea-btn-outline-secondary" type="button">
+                          <span class="bi bi-search"></span>
+                        </button>
+                      </div>
+                      <div class="row g-2">
+                        <div class="col-4">
+                          <select class="form-select" aria-label="Filter by priority">
+                            <option selected>All Priority</option>
+                            <option>High</option>
+                            <option>Medium</option>
+                            <option>Low</option>
+                          </select>
+                        </div>
+                        <div class="col-4">
+                          <select class="form-select" aria-label="Filter by status">
+                            <option selected>All Status</option>
+                            <option>Unread</option>
+                            <option>Assigned</option>
+                            <option>Replied</option>
+                          </select>
+                        </div>
+                        <div class="col-4">
+                          <select class="form-select" aria-label="Assign to agent">
+                            <option selected>Assign Agent</option>
+                            <option>Sarah Lee</option>
+                            <option>Mike Chen</option>
+                            <option>Emma Wilson</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                    <div class="overflow-auto flex-grow-1" style="max-height: 400px;">
+                      <div class="d-flex align-items-center inbox-feed-item active p-2 border-bottom">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="email1">
+                        <div class="avatar-circle me-3">JS</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">John Smith <span class="badge bg-danger ms-1">High</span></div>
+                          <div class="small text-muted fw-semibold">Re: Meeting Follow Up</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">Are you available next week to discuss the project?</div>
+                          <div class="small text-success mt-1"><i class="bi bi-person-check me-1"></i>Assigned to: Sarah Lee</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-warning text-dark mb-1">Unread</span>
+                          <div class="small text-muted">2h ago</div>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="email2">
+                        <div class="avatar-circle me-3">JD</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">Jane Doe <span class="badge bg-warning ms-1">Medium</span></div>
+                          <div class="small text-muted fw-semibold">Project Update</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">Here's the latest update on the project timeline.</div>
+                          <div class="small text-primary mt-1"><i class="bi bi-robot me-1"></i>AI Processing</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-info text-dark mb-1">Processing</span>
+                          <div class="small text-muted">4h ago</div>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="email3">
+                        <div class="avatar-circle me-3">AC</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">Acme Corp <span class="badge bg-secondary ms-1">Low</span></div>
+                          <div class="small text-muted fw-semibold">Quarterly Report</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">Please review the attached quarterly financial report.</div>
+                          <div class="small text-success mt-1"><i class="bi bi-person-check me-1"></i>Assigned to: Mike Chen</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success mb-1">Replied</span>
+                          <div class="small text-muted">1d ago</div>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="email4">
+                        <div class="avatar-circle me-3">EC</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">Emily Carter <span class="badge bg-danger ms-1">High</span></div>
+                          <div class="small text-muted fw-semibold">Product Return Policy</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">I need to return a jacket that doesn't fit...</div>
+                          <div class="small text-success mt-1"><i class="bi bi-person-check me-1"></i>Assigned to: Emma Wilson</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success mb-1">Replied</span>
+                          <div class="small text-muted">2d ago</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Sent Tab -->
+                  <div class="tab-pane fade" id="sent-pane" role="tabpanel" aria-labelledby="sent-tab">
+                    <form class="mb-3">
+                      <div class="input-group mb-2">
+                        <input type="text" class="form-control" placeholder="Search sent emails...">
+                        <button class="btn ea-btn-outline-secondary" type="button">
+                          <span class="bi bi-search"></span>
+                        </button>
+                      </div>
+                      <div class="row g-2">
+                        <div class="col-6">
+                          <select class="form-select" aria-label="Filter by date">
+                            <option selected>All Time</option>
+                            <option>Today</option>
+                            <option>This Week</option>
+                            <option>This Month</option>
+                          </select>
+                        </div>
+                        <div class="col-6">
+                          <select class="form-select" aria-label="Filter by sender">
+                            <option selected>All Senders</option>
+                            <option>AI Agent</option>
+                            <option>Sarah Lee</option>
+                            <option>Mike Chen</option>
+                            <option>Emma Wilson</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                    <div class="overflow-auto flex-grow-1" style="max-height: 400px;">
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <div class="avatar-circle me-3 bg-success text-white">AI</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">To: John Smith</div>
+                          <div class="small text-muted fw-semibold">Re: Meeting Follow Up</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">Thank you for your inquiry. I'll check my calendar...</div>
+                          <div class="small text-primary mt-1"><i class="bi bi-robot me-1"></i>Sent by AI Agent</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success mb-1">Delivered</span>
+                          <div class="small text-muted">1h ago</div>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <div class="avatar-circle me-3">SL</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">To: Emily Carter</div>
+                          <div class="small text-muted fw-semibold">Re: Product Return Policy</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">I've sent you the return label and instructions...</div>
+                          <div class="small text-success mt-1"><i class="bi bi-person-check me-1"></i>Sent by Sarah Lee</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success mb-1">Delivered</span>
+                          <div class="small text-muted">3h ago</div>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center inbox-feed-item p-2 border-bottom">
+                        <div class="avatar-circle me-3">MC</div>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold">To: Acme Corp</div>
+                          <div class="small text-muted fw-semibold">Re: Quarterly Report</div>
+                          <div class="small text-muted text-truncate" style="max-width: 180px;">Thank you for the quarterly report. I've reviewed...</div>
+                          <div class="small text-success mt-1"><i class="bi bi-person-check me-1"></i>Sent by Mike Chen</div>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success mb-1">Delivered</span>
+                          <div class="small text-muted">1d ago</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-6">
-                  <select class="form-select" aria-label="Filter by status">
-                    <option selected>All Statuses</option>
-                    <option>AI Replied</option>
-                    <option>Scheduled</option>
-                  </select>
+                <!-- Bulk Actions -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="assignSelectedEmails()">
+                      <i class="bi bi-person-plus me-1"></i> Assign Selected
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="markAsRead()">
+                      <i class="bi bi-envelope-open me-1"></i> Mark Read
+                    </button>
+                  </div>
+                  <div class="small text-muted">
+                    <span id="emailCount">4 emails</span>
+                  </div>
                 </div>
-              </div>
-            </form>
-            <div class="overflow-auto flex-grow-1 mb-4" style="max-height: 400px;">
-              <div class="d-flex align-items-center inbox-feed-item active">
-                <div class="avatar-circle me-3">JS</div>
-                <div class="flex-grow-1">
-                  <div class="fw-bold">John Smith</div>
-                  <div class="small text-muted fw-semibold">Re: Meeting Follow Up</div>
-                  <div class="small text-muted text-truncate" style="max-width: 220px;">Are you available next week to discuss the project?</div>
-                </div>
-                <span class="badge bg-warning text-dark ms-3 align-self-start">AI Generate – Not Sent</span>
-              </div>
-              <div class="d-flex align-items-center inbox-feed-item">
-                <div class="avatar-circle me-3">JD</div>
-                <div class="flex-grow-1">
-                  <div class="fw-bold">Jane Doe</div>
-                  <div class="small text-muted fw-semibold">Project Update</div>
-                  <div class="small text-muted text-truncate" style="max-width: 220px;">Here's the latest update on the project timeline.</div>
-                </div>
-                <span class="badge bg-info text-dark ms-3 align-self-start">Scheduled</span>
-              </div>
-              <div class="d-flex align-items-center inbox-feed-item">
-                <div class="avatar-circle me-3">AC</div>
-                <div class="flex-grow-1">
-                  <div class="fw-bold">Acme Corp</div>
-                  <div class="small text-muted fw-semibold">Quarterly Report</div>
-                  <div class="small text-muted text-truncate" style="max-width: 220px;">Please review the attached quarterly financial report.</div>
-                </div>
-                <span class="badge bg-success ms-3 align-self-start">Sent</span>
-              </div>
-              <div class="d-flex align-items-center inbox-feed-item">
-                <div class="avatar-circle me-3">ST</div>
-                <div class="flex-grow-1">
-                  <div class="fw-bold">Support Team</div>
-                  <div class="small text-muted fw-semibold">Ticket Follow Up</div>
-                  <div class="small text-muted text-truncate" style="max-width: 220px;">Following up on your support request.</div>
-                </div>
-                <span class="badge bg-secondary ms-3 align-self-start">Draft</span>
-              </div>
-            </div>
-            <h6 class="mb-2">Reply Batches – AI Agent Generated</h6>
-            <div class="list-group mb-4">
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                Batch #183 – Refunds
-                <span class="badge bg-danger">3 replies pending QA</span>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                Batch #184 – Order Confirmations
-                <span class="badge bg-warning text-dark">2 queued for delivery</span>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                Batch #185 – Shipping Issues
-                <span class="badge bg-info text-dark">1 scheduled</span>
-              </a>
-            </div>
-            <h6 class="mb-2">Agent Replied</h6>
-            <div class="list-group">
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                  <div><strong>John Smith</strong></div>
-                  <div class="small text-truncate" style="max-width: 180px;">Re: Meeting Follow Up</div>
-                </div>
-                <span class="badge bg-warning text-dark align-self-center">AI Replied</span>
-              </a>
-               <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                  <div><strong>Emily Chia</strong></div>
-                  <div class="small text-truncate" style="max-width: 180px;">Re: Complain Product Defect</div>
-                </div>
-                <span class="badge bg-danger text-white align-self-center">Human Agent Replied</span>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                  <div><strong>Jane Doe</strong></div>
-                  <div class="small text-truncate" style="max-width: 180px;">Project Update</div>
-                </div>
-                <span class="badge bg-info text-dark align-self-center">Scheduled</span>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                  <div><strong>Acme Corp</strong></div>
-                  <div class="small text-truncate" style="max-width: 180px;">Quarterly Report</div>
-                </div>
-                <span class="badge bg-success align-self-center">Sent</span>
-              </a>
-            </div>
           </div>
         </div>
       </div>
@@ -468,9 +570,21 @@ ShopNow Customer Support
               <button type="button" class="btn btn-info">Schedule</button>
               <button type="button" class="btn btn-success">Send</button>
             </div>
-            <!-- Reply as Human Agent Button -->
-            <div class="d-flex">
-              <button type="button" class="btn btn-dark ms-auto" data-bs-toggle="modal" data-bs-target="#humanReplyModal">
+            <!-- Assignment and Reply Actions -->
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="dropdown">
+                <button class="btn btn-outline-warning dropdown-toggle" type="button" id="assignDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-person-plus me-1"></i> Assign to Agent
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="assignDropdown">
+                  <li><a class="dropdown-item" href="#" onclick="assignToAgent('Sarah Lee')">Sarah Lee</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="assignToAgent('Mike Chen')">Mike Chen</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="assignToAgent('Emma Wilson')">Emma Wilson</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" onclick="assignToAgent('AI Agent')">Reassign to AI</a></li>
+                </ul>
+              </div>
+              <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#humanReplyModal">
                 Reply as Human Agent
               </button>
             </div>
@@ -578,6 +692,85 @@ ShopNow Customer Support
         sidebarBackdrop.classList.remove('show');
       });
     }
+  });
+
+  // Commercial Inbox Features
+  function switchAccount(accountEmail) {
+    document.getElementById('currentAccount').textContent = accountEmail;
+    // Simulate loading emails for the selected account
+    console.log('Switched to account:', accountEmail);
+    // In a real application, this would trigger an API call to load emails for the selected account
+  }
+
+  function assignToAgent(agentName) {
+    // Get the currently selected email (in a real app, this would be based on the active email)
+    const currentEmail = document.querySelector('.inbox-feed-item.active');
+    if (currentEmail) {
+      const assignmentInfo = currentEmail.querySelector('.small.text-success, .small.text-primary');
+      if (assignmentInfo) {
+        if (agentName === 'AI Agent') {
+          assignmentInfo.innerHTML = '<i class="bi bi-robot me-1"></i>AI Processing';
+          assignmentInfo.className = 'small text-primary mt-1';
+        } else {
+          assignmentInfo.innerHTML = `<i class="bi bi-person-check me-1"></i>Assigned to: ${agentName}`;
+          assignmentInfo.className = 'small text-success mt-1';
+        }
+      }
+    }
+    console.log('Assigned current email to:', agentName);
+  }
+
+  function assignSelectedEmails() {
+    const selectedEmails = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (selectedEmails.length === 0) {
+      alert('Please select emails to assign.');
+      return;
+    }
+    
+    const agent = prompt('Enter agent name (Sarah Lee, Mike Chen, Emma Wilson):');
+    if (agent) {
+      selectedEmails.forEach(checkbox => {
+        const emailItem = checkbox.closest('.inbox-feed-item');
+        const assignmentInfo = emailItem.querySelector('.small.text-success, .small.text-primary');
+        if (assignmentInfo) {
+          assignmentInfo.innerHTML = `<i class="bi bi-person-check me-1"></i>Assigned to: ${agent}`;
+          assignmentInfo.className = 'small text-success mt-1';
+        }
+        checkbox.checked = false;
+      });
+      console.log(`Assigned ${selectedEmails.length} emails to ${agent}`);
+    }
+  }
+
+  function markAsRead() {
+    const selectedEmails = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (selectedEmails.length === 0) {
+      alert('Please select emails to mark as read.');
+      return;
+    }
+    
+    selectedEmails.forEach(checkbox => {
+      const emailItem = checkbox.closest('.inbox-feed-item');
+      const statusBadge = emailItem.querySelector('.badge');
+      if (statusBadge && statusBadge.textContent === 'Unread') {
+        statusBadge.textContent = 'Read';
+        statusBadge.className = 'badge bg-secondary mb-1';
+      }
+      checkbox.checked = false;
+    });
+    console.log(`Marked ${selectedEmails.length} emails as read`);
+  }
+
+  // Tab switching functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('#inboxTabs button[data-bs-toggle="tab"]');
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetTab = this.getAttribute('data-bs-target');
+        console.log('Switched to tab:', targetTab);
+        // In a real application, this could trigger loading different data sets
+      });
+    });
   });
 </script>
 </body>

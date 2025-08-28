@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reply Batches - Email Agent</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .batch-card {
+      background: var(--ea-white);
+      border-radius: var(--ea-radius-md);
+      box-shadow: var(--ea-shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid var(--ea-gray-light);
+    }
+    .batch-card:hover {
+      box-shadow: var(--ea-shadow-lg);
+      transform: translateY(-2px);
+    }
+    .status-badge {
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--ea-radius-pill);
+      font-weight: 500;
+    }
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status-queued {
+      background-color: #e6eaf7;
+      color: var(--ea-primary);
+    }
+    .status-scheduled {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .batch-progress {
+      height: 8px;
+      border-radius: var(--ea-radius-sm);
+    }
+    .batch-stats {
+      font-size: 0.9rem;
+      color: var(--ea-gray);
+    }
+    .batch-actions {
+      gap: var(--ea-spacing-sm);
+    }
+    .batch-detail-modal .modal-dialog {
+      max-width: 800px;
+    }
+    .reply-item {
+      border: 1px solid var(--ea-gray-light);
+      border-radius: var(--ea-radius-sm);
+      padding: var(--ea-spacing-md);
+      margin-bottom: var(--ea-spacing-sm);
+    }
+    .reply-preview {
+      background: var(--ea-light);
+      border-radius: var(--ea-radius-sm);
+      padding: var(--ea-spacing-sm);
+      font-size: 0.9rem;
+      max-height: 100px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="ea-wrapper">
+    <!-- Sidebar -->
+    <div class="ea-sidebar">
+      <div class="ea-sidebar-header">
+        <a href="index.html" class="ea-sidebar-brand">
+          <i class="bi bi-envelope-at"></i>
+          Email Agent
+        </a>
+      </div>
+      <ul class="ea-sidebar-menu">
+        <li class="ea-sidebar-item">
+          <a href="index.html" class="ea-sidebar-link">
+            <i class="bi bi-speedometer2 ea-sidebar-icon"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="inbox.html" class="ea-sidebar-link">
+            <i class="bi bi-inbox ea-sidebar-icon"></i>
+            <span>Inbox</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="reply-batches.html" class="ea-sidebar-link active">
+            <i class="bi bi-collection ea-sidebar-icon"></i>
+            <span>Reply Batches</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="automation.html" class="ea-sidebar-link">
+            <i class="bi bi-lightning ea-sidebar-icon"></i>
+            <span>Automation Rules</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="flowconnect.html" class="ea-sidebar-link">
+            <i class="bi bi-diagram-3 ea-sidebar-icon"></i>
+            <span>Workflow Builder</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="promptlib.html" class="ea-sidebar-link">
+            <i class="bi bi-chat-left-text ea-sidebar-icon"></i>
+            <span>Prompt Library</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="kbrules.html" class="ea-sidebar-link">
+            <i class="bi bi-shield-check ea-sidebar-icon"></i>
+            <span>Guardrails</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-gear ea-sidebar-icon"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="ea-sidebar-item">
+          <a href="#" class="ea-sidebar-link">
+            <i class="bi bi-question-circle ea-sidebar-icon"></i>
+            <span>Help & Support</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ea-main">
+      <div class="ea-header">
+        <h4 class="mb-0">Reply Batches</h4>
+        <div class="d-flex gap-2">
+          <button class="btn ea-btn ea-btn-outline-primary" onclick="showFilterModal()">
+            <i class="bi bi-filter me-1"></i>Filter
+          </button>
+          <button class="btn ea-btn ea-btn-primary" onclick="showCreateBatchModal()">
+            <i class="bi bi-plus-lg me-1"></i>Create Batch
+          </button>
+        </div>
+      </div>
+      
+      <div class="ea-content">
+
+        <!-- Batch Cards -->
+        <div class="row g-4">
+          <!-- Refunds Batch -->
+          <div class="col-md-6 col-lg-4">
+            <div class="batch-card p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="mb-2">Refund Requests</h5>
+                  <span class="status-badge status-pending">15 Pending QA</span>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="editBatch('refunds')">Edit Batch</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportReplies('refunds')">Export Replies</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteBatch('refunds')">Delete Batch</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="progress batch-progress mb-2">
+                  <div class="progress-bar bg-warning" style="width: 60%"></div>
+                </div>
+                <div class="batch-stats d-flex justify-content-between">
+                  <span>25 Total Replies</span>
+                  <span>60% Complete</span>
+                </div>
+              </div>
+              <div class="d-flex batch-actions">
+                <button class="btn ea-btn ea-btn-primary flex-grow-1" onclick="reviewBatch('refunds', 'Refund Requests', 25, 15)">
+                  Review Batch
+                </button>
+                <button class="btn ea-btn ea-btn-outline-primary" onclick="approveBatch('refunds')" title="Approve All">
+                  <i class="bi bi-check2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Confirmations Batch -->
+          <div class="col-md-6 col-lg-4">
+            <div class="batch-card p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="mb-2">Order Confirmations</h5>
+                  <span class="status-badge status-queued">32 Queued</span>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="editBatch('orders')">Edit Batch</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportReplies('orders')">Export Replies</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteBatch('orders')">Delete Batch</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="progress batch-progress mb-2">
+                  <div class="progress-bar" style="width: 85%; background-color: var(--ea-primary);"></div>
+                </div>
+                <div class="batch-stats d-flex justify-content-between">
+                  <span>32 Total Replies</span>
+                  <span>85% Complete</span>
+                </div>
+              </div>
+              <div class="d-flex batch-actions">
+                <button class="btn ea-btn ea-btn-primary flex-grow-1" onclick="reviewBatch('orders', 'Order Confirmations', 32, 32)">
+                  Review Batch
+                </button>
+                <button class="btn ea-btn ea-btn-outline-primary" onclick="approveBatch('orders')" title="Approve All">
+                  <i class="bi bi-check2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping Issues Batch -->
+          <div class="col-md-6 col-lg-4">
+            <div class="batch-card p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="mb-2">Shipping Issues</h5>
+                  <span class="status-badge status-scheduled">28 Scheduled</span>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="editBatch('shipping')">Edit Batch</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportReplies('shipping')">Export Replies</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteBatch('shipping')">Delete Batch</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="progress batch-progress mb-2">
+                  <div class="progress-bar" style="width: 100%; background-color: var(--ea-success);"></div>
+                </div>
+                <div class="batch-stats d-flex justify-content-between">
+                  <span>28 Total Replies</span>
+                  <span>100% Complete</span>
+                </div>
+              </div>
+              <div class="d-flex batch-actions">
+                <button class="btn ea-btn ea-btn-primary flex-grow-1" onclick="reviewBatch('shipping', 'Shipping Issues', 28, 0)">
+                  Review Batch
+                </button>
+                <button class="btn ea-btn ea-btn-outline-primary" onclick="approveBatch('shipping')" title="Approve All">
+                  <i class="bi bi-check2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Review Modal -->
+  <div class="modal fade batch-detail-modal" id="batchReviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="batchModalTitle">Review Batch</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <span class="badge bg-secondary" id="batchTotalCount">0 Total</span>
+              <span class="badge bg-warning" id="batchPendingCount">0 Pending</span>
+            </div>
+            <div>
+              <button class="btn btn-sm ea-btn ea-btn-outline-primary me-2" onclick="selectAllReplies()">
+                Select All
+              </button>
+              <button class="btn btn-sm ea-btn ea-btn-primary" onclick="approveSelected()">
+                Approve Selected
+              </button>
+            </div>
+          </div>
+          <div id="repliesList">
+            <!-- Reply items will be populated here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ea-btn ea-btn-outline-primary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn ea-btn ea-btn-primary" onclick="approveAllInBatch()">Approve All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Filter Batches</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="statusFilter">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending QA</option>
+              <option value="queued">Queued</option>
+              <option value="scheduled">Scheduled</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="categoryFilter">
+              <option value="">All Categories</option>
+              <option value="refunds">Refund Requests</option>
+              <option value="orders">Order Confirmations</option>
+              <option value="shipping">Shipping Issues</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ea-btn ea-btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn ea-btn ea-btn-primary" onclick="applyFilters()">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Batch Modal -->
+  <div class="modal fade" id="createBatchModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Batch</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Batch Name</label>
+            <input type="text" class="form-control" id="batchName" placeholder="Enter batch name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="batchCategory">
+              <option value="">Select category</option>
+              <option value="refunds">Refund Requests</option>
+              <option value="orders">Order Confirmations</option>
+              <option value="shipping">Shipping Issues</option>
+              <option value="support">General Support</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" id="batchDescription" rows="3" placeholder="Optional description"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ea-btn ea-btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn ea-btn ea-btn-primary" onclick="createBatch()">Create Batch</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Sample data for demonstration
+    const batchData = {
+      refunds: {
+        name: 'Refund Requests',
+        total: 25,
+        pending: 15,
+        replies: [
+          { id: 1, subject: 'Refund Request - Order #12345', preview: 'Thank you for contacting us regarding your refund request. We have processed your request and...', status: 'pending' },
+          { id: 2, subject: 'Refund Request - Order #12346', preview: 'We understand your concern about the product quality. Your refund has been approved and...', status: 'pending' },
+          { id: 3, subject: 'Refund Request - Order #12347', preview: 'Your refund request has been received. Please allow 3-5 business days for processing...', status: 'approved' }
+        ]
+      },
+      orders: {
+        name: 'Order Confirmations',
+        total: 32,
+        pending: 0,
+        replies: [
+          { id: 4, subject: 'Order Confirmation - #54321', preview: 'Thank you for your order! Your order #54321 has been confirmed and is being processed...', status: 'approved' },
+          { id: 5, subject: 'Order Confirmation - #54322', preview: 'We have received your order and payment. Your items will be shipped within 24 hours...', status: 'approved' }
+        ]
+      },
+      shipping: {
+        name: 'Shipping Issues',
+        total: 28,
+        pending: 0,
+        replies: [
+          { id: 6, subject: 'Shipping Delay Notification', preview: 'We apologize for the delay in your shipment. Due to weather conditions, your package...', status: 'approved' },
+          { id: 7, subject: 'Package Delivery Update', preview: 'Your package has been delivered to the specified address. If you have not received...', status: 'approved' }
+        ]
+      }
+    };
+
+    // Modal functions
+    function showFilterModal() {
+      const modal = new bootstrap.Modal(document.getElementById('filterModal'));
+      modal.show();
+    }
+
+    function showCreateBatchModal() {
+      const modal = new bootstrap.Modal(document.getElementById('createBatchModal'));
+      modal.show();
+    }
+
+    function reviewBatch(batchId, batchName, total, pending) {
+      const modal = new bootstrap.Modal(document.getElementById('batchReviewModal'));
+      const data = batchData[batchId];
+      
+      document.getElementById('batchModalTitle').textContent = `Review: ${batchName}`;
+      document.getElementById('batchTotalCount').textContent = `${total} Total`;
+      document.getElementById('batchPendingCount').textContent = `${pending} Pending`;
+      
+      const repliesList = document.getElementById('repliesList');
+      repliesList.innerHTML = '';
+      
+      data.replies.forEach(reply => {
+        const replyItem = document.createElement('div');
+        replyItem.className = 'reply-item';
+        replyItem.innerHTML = `
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="reply-${reply.id}" ${reply.status === 'pending' ? '' : 'disabled'}>
+              <label class="form-check-label fw-semibold" for="reply-${reply.id}">
+                ${reply.subject}
+              </label>
+            </div>
+            <span class="badge ${reply.status === 'pending' ? 'bg-warning' : 'bg-success'}">
+              ${reply.status === 'pending' ? 'Pending' : 'Approved'}
+            </span>
+          </div>
+          <div class="reply-preview">
+            ${reply.preview}
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-sm ea-btn ea-btn-outline-primary me-2" onclick="editReply(${reply.id})">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button class="btn btn-sm ea-btn ea-btn-outline-primary" onclick="previewReply(${reply.id})">
+              <i class="bi bi-eye"></i> Preview
+            </button>
+          </div>
+        `;
+        repliesList.appendChild(replyItem);
+      });
+      
+      modal.show();
+    }
+
+    // Batch actions
+    function editBatch(batchId) {
+      alert(`Edit batch: ${batchId}`);
+    }
+
+    function exportReplies(batchId) {
+      alert(`Export replies for batch: ${batchId}`);
+    }
+
+    function deleteBatch(batchId) {
+      if (confirm(`Are you sure you want to delete the ${batchId} batch?`)) {
+        alert(`Batch ${batchId} deleted`);
+      }
+    }
+
+    function approveBatch(batchId) {
+      if (confirm(`Approve all replies in ${batchId} batch?`)) {
+        alert(`All replies in ${batchId} batch approved`);
+      }
+    }
+
+    // Reply actions
+    function selectAllReplies() {
+      const checkboxes = document.querySelectorAll('#repliesList input[type="checkbox"]:not([disabled])');
+      checkboxes.forEach(cb => cb.checked = true);
+    }
+
+    function approveSelected() {
+      const selected = document.querySelectorAll('#repliesList input[type="checkbox"]:checked');
+      if (selected.length > 0) {
+        alert(`${selected.length} replies approved`);
+      } else {
+        alert('No replies selected');
+      }
+    }
+
+    function approveAllInBatch() {
+      if (confirm('Approve all replies in this batch?')) {
+        alert('All replies approved');
+      }
+    }
+
+    function editReply(replyId) {
+      alert(`Edit reply: ${replyId}`);
+    }
+
+    function previewReply(replyId) {
+      alert(`Preview reply: ${replyId}`);
+    }
+
+    // Filter and create functions
+    function applyFilters() {
+      const status = document.getElementById('statusFilter').value;
+      const category = document.getElementById('categoryFilter').value;
+      alert(`Filters applied - Status: ${status || 'All'}, Category: ${category || 'All'}`);
+      bootstrap.Modal.getInstance(document.getElementById('filterModal')).hide();
+    }
+
+    function createBatch() {
+      const name = document.getElementById('batchName').value;
+      const category = document.getElementById('batchCategory').value;
+      const description = document.getElementById('batchDescription').value;
+      
+      if (!name || !category) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      alert(`Batch created: ${name} (${category})`);
+      bootstrap.Modal.getInstance(document.getElementById('createBatchModal')).hide();
+      
+      // Reset form
+      document.getElementById('batchName').value = '';
+      document.getElementById('batchCategory').value = '';
+      document.getElementById('batchDescription').value = '';
+    }
+  </script>
+</body>
+</html>

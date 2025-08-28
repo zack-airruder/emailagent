@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Management - Email Agent</title>
+  <title>Human Agents - Email Agent</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="shared.css">
@@ -108,58 +108,66 @@
         <div class="container-fluid">
           <div class="row mb-4">
             <div class="col">
-              <h2 class="mb-0">Task Management</h2>
-              <p class="text-muted">Track and manage email-related tasks</p>
+              <h2 class="mb-0">Human Agent Management</h2>
+              <p class="text-muted">Manage human agents and their reply batch assignments</p>
             </div>
             <div class="col-auto">
+              <a href="reply-batches.html" class="ea-btn ea-btn-outline-secondary me-2">
+                <i class="bi bi-collection me-1"></i> Reply Batches
+              </a>
               <a href="inbox.html" class="ea-btn ea-btn-outline-secondary me-2">
                 <i class="bi bi-envelope me-1"></i> Inbox
               </a>
-              <a href="flowconnect.html" class="ea-btn ea-btn-outline-secondary me-2">
-                <i class="bi bi-diagram-3 me-1"></i> Workflows
-              </a>
-              <button class="ea-btn ea-btn-primary" id="newTaskBtn">
-                <i class="bi bi-plus-lg me-2"></i>New Task
+              <button class="ea-btn ea-btn-primary" id="newAgentBtn">
+                <i class="bi bi-person-plus me-2"></i>Add Agent
               </button>
             </div>
           </div>
 
-          <!-- Task Filters -->
+          <!-- Agent Filters -->
           <div class="ea-card mb-4">
             <div class="ea-card-body">
               <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">Status</label>
                   <select class="form-select" id="statusFilter">
                     <option value="all">All Status</option>
-                    <option value="open">Open</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="review">Review</option>
-                    <option value="completed">Completed</option>
+                    <option value="active">Active</option>
+                    <option value="busy">Busy</option>
+                    <option value="offline">Offline</option>
                   </select>
                 </div>
-                <div class="col-md-4">
-                  <label class="form-label">Priority</label>
-                  <select class="form-select" id="priorityFilter">
-                    <option value="all">All Priorities</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
+                <div class="col-md-3">
+                  <label class="form-label">Department</label>
+                  <select class="form-select" id="departmentFilter">
+                    <option value="all">All Departments</option>
+                    <option value="support">Customer Support</option>
+                    <option value="sales">Sales</option>
+                    <option value="technical">Technical</option>
                   </select>
                 </div>
-                <div class="col-md-4">
-                  <label class="form-label">Assigned To</label>
-                  <select class="form-select" id="assigneeFilter">
-                    <option value="all">All Team Members</option>
-                    <option value="me">Assigned to Me</option>
-                    <option value="unassigned">Unassigned</option>
+                <div class="col-md-3">
+                  <label class="form-label">Workload</label>
+                  <select class="form-select" id="workloadFilter">
+                    <option value="all">All Workloads</option>
+                    <option value="light">Light (0-5 batches)</option>
+                    <option value="moderate">Moderate (6-15 batches)</option>
+                    <option value="heavy">Heavy (16+ batches)</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Batch Assignment</label>
+                  <select class="form-select" id="batchFilter">
+                    <option value="all">All Agents</option>
+                    <option value="available">Available for Assignment</option>
+                    <option value="overloaded">Overloaded</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Task List -->
+          <!-- Agent List -->
           <div class="ea-card">
             <div class="ea-card-body">
               <div class="table-responsive">
@@ -167,17 +175,18 @@
                   <thead>
                     <tr>
                       <th style="width: 50px;"><input type="checkbox" class="form-check-input" id="selectAll"></th>
-                      <th>Task</th>
-                      <th>Related To</th>
-                      <th>Priority</th>
+                      <th>Agent</th>
+                      <th>Department</th>
                       <th>Status</th>
-                      <th>Due Date</th>
-                      <th>Assigned To</th>
-                      <th style="width: 100px;">Actions</th>
+                      <th>Current Batches</th>
+                      <th>Pending Reviews</th>
+                      <th>Performance</th>
+                      <th>Last Active</th>
+                      <th style="width: 120px;">Actions</th>
                     </tr>
                   </thead>
-                  <tbody id="taskList">
-                    <!-- Tasks will be populated here -->
+                  <tbody id="agentList">
+                    <!-- Agents will be populated here -->
                   </tbody>
                 </table>
               </div>
@@ -188,67 +197,119 @@
     </div>
   </div>
 
-  <!-- Task Modal -->
-  <div class="modal fade" id="taskModal" tabindex="-1">
+  <!-- Agent Modal -->
+  <div class="modal fade" id="agentModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="taskModalLabel">New Task</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="agentModalTitle">Add New Agent</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="taskForm">
-            <div class="mb-3">
-              <label class="form-label">Task Title</label>
-              <input type="text" class="form-control" id="taskTitle" required>
-            </div>
-            <div class="row mb-3">
+          <form id="agentForm">
+            <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label">Related To</label>
-                <select class="form-select" id="taskRelatedTo">
-                  <option value="">None</option>
-                  <option value="email">Email</option>
-                  <option value="automation">Automation</option>
-                  <option value="workflow">Workflow</option>
-                </select>
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="agentName" required>
               </div>
-              <div class="col-md-6" id="relatedItemContainer" style="display: none;">
-                <label class="form-label">Select Item</label>
-                <select class="form-select" id="relatedItem"></select>
-              </div>
-            </div>
-            <div class="row mb-3">
               <div class="col-md-6">
-                <label class="form-label">Priority</label>
-                <select class="form-select" id="taskPriority">
-                  <option value="low">Low</option>
-                  <option value="medium" selected>Medium</option>
-                  <option value="high">High</option>
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="agentEmail" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <select class="form-select" id="agentDepartment" required>
+                  <option value="">Select Department</option>
+                  <option value="support">Customer Support</option>
+                  <option value="sales">Sales</option>
+                  <option value="technical">Technical</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Due Date</label>
-                <input type="date" class="form-control" id="taskDueDate">
+                <label class="form-label">Role</label>
+                <select class="form-select" id="agentRole" required>
+                  <option value="">Select Role</option>
+                  <option value="agent">Agent</option>
+                  <option value="senior-agent">Senior Agent</option>
+                  <option value="supervisor">Supervisor</option>
+                  <option value="manager">Manager</option>
+                </select>
               </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Assigned To</label>
-              <select class="form-select" id="taskAssignee">
-                <option value="">Unassigned</option>
-                <option value="alex">Alex Smith</option>
-                <option value="jamie">Jamie Lee</option>
-                <option value="taylor">Taylor Wong</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" id="taskDescription" rows="3"></textarea>
+              <div class="col-md-6">
+                <label class="form-label">Max Concurrent Batches</label>
+                <input type="number" class="form-control" id="maxBatches" min="1" max="50" value="10">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Shift</label>
+                <select class="form-select" id="agentShift">
+                  <option value="morning">Morning (9 AM - 5 PM)</option>
+                  <option value="evening">Evening (1 PM - 9 PM)</option>
+                  <option value="night">Night (9 PM - 5 AM)</option>
+                  <option value="flexible">Flexible</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Specializations</label>
+                <div class="form-check-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="spec-refunds" value="refunds">
+                    <label class="form-check-label" for="spec-refunds">Refunds</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="spec-technical" value="technical">
+                    <label class="form-check-label" for="spec-technical">Technical Issues</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="spec-billing" value="billing">
+                    <label class="form-check-label" for="spec-billing">Billing</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="spec-shipping" value="shipping">
+                    <label class="form-check-label" for="spec-shipping">Shipping</label>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="ea-btn ea-btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="ea-btn ea-btn-primary" id="saveTaskBtn">Save Task</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveAgent">Save Agent</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Assignment Modal -->
+  <div class="modal fade" id="batchAssignModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Assign Reply Batches</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Agent: <span id="assignAgentName" class="fw-bold"></span></label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Available Batches</label>
+            <div id="availableBatches" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+              <!-- Available batches will be populated here -->
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="assignmentPriority">
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmAssignment">Assign Batches</button>
         </div>
       </div>
     </div>
@@ -256,277 +317,411 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Sidebar toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const sidebarToggle = document.getElementById('sidebarToggle');
-      const sidebar = document.querySelector('.ea-sidebar');
-      const sidebarClose = document.querySelector('.ea-sidebar-close');
-      
-      if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-          sidebar.classList.toggle('ea-sidebar-mobile-open');
-        });
+    // Sample agent data
+    const agents = [
+      {
+        id: 1,
+        name: "Sarah Johnson",
+        email: "sarah.johnson@company.com",
+        department: "support",
+        role: "senior-agent",
+        status: "active",
+        currentBatches: 8,
+        pendingReviews: 3,
+        performance: 94,
+        lastActive: "2024-01-15 14:30",
+        maxBatches: 15,
+        shift: "morning",
+        specializations: ["refunds", "billing"],
+        assignedBatches: ["Refunds Batch", "Order Confirmations"]
+      },
+      {
+        id: 2,
+        name: "Mike Chen",
+        email: "mike.chen@company.com",
+        department: "technical",
+        role: "agent",
+        status: "busy",
+        currentBatches: 12,
+        pendingReviews: 7,
+        performance: 87,
+        lastActive: "2024-01-15 15:45",
+        maxBatches: 12,
+        shift: "evening",
+        specializations: ["technical", "shipping"],
+        assignedBatches: ["Shipping Issues", "Technical Support"]
+      },
+      {
+        id: 3,
+        name: "Emily Rodriguez",
+        email: "emily.rodriguez@company.com",
+        department: "sales",
+        role: "supervisor",
+        status: "active",
+        currentBatches: 5,
+        pendingReviews: 1,
+        performance: 96,
+        lastActive: "2024-01-15 16:20",
+        maxBatches: 20,
+        shift: "flexible",
+        specializations: ["billing", "refunds"],
+        assignedBatches: ["VIP Customer Inquiries"]
+      },
+      {
+        id: 4,
+        name: "David Kim",
+        email: "david.kim@company.com",
+        department: "support",
+        role: "agent",
+        status: "offline",
+        currentBatches: 0,
+        pendingReviews: 0,
+        performance: 91,
+        lastActive: "2024-01-14 17:00",
+        maxBatches: 10,
+        shift: "night",
+        specializations: ["technical"],
+        assignedBatches: []
       }
-      
-      if (sidebarClose) {
-        sidebarClose.addEventListener('click', function() {
-          sidebar.classList.remove('ea-sidebar-mobile-open');
-        });
-      }
-      
-      // Sample tasks data
-      const tasks = [
-        {
-          id: 1,
-          title: "Follow up with customer about refund request",
-          relatedTo: "email",
-          relatedItem: "RE: Order #12345 Refund",
-          priority: "high",
-          status: "open",
-          dueDate: "2023-07-15",
-          assignee: "alex"
-        },
-        {
-          id: 2,
-          title: "Update auto-reply template for support tickets",
-          relatedTo: "automation",
-          relatedItem: "Support Ticket Auto-Reply",
-          priority: "medium",
-          status: "in-progress",
-          dueDate: "2023-07-18",
-          assignee: "jamie"
-        },
-        {
-          id: 3,
-          title: "Review new workflow for order processing",
-          relatedTo: "workflow",
-          relatedItem: "Order Processing Flow",
-          priority: "medium",
-          status: "review",
-          dueDate: "2023-07-20",
-          assignee: "taylor"
-        },
-        {
-          id: 4,
-          title: "Create documentation for email templates",
-          relatedTo: "",
-          relatedItem: "",
-          priority: "low",
-          status: "open",
-          dueDate: "2023-07-25",
-          assignee: ""
-        },
-        {
-          id: 5,
-          title: "Implement new guardrails for sensitive information",
-          relatedTo: "automation",
-          relatedItem: "PII Detection",
-          priority: "high",
-          status: "completed",
-          dueDate: "2023-07-10",
-          assignee: "alex"
-        }
-      ];
-      
-      // Render tasks
-      function renderTasks(taskList = tasks) {
-        const taskListEl = document.getElementById('taskList');
-        taskListEl.innerHTML = '';
-        
-        taskList.forEach(task => {
-          const row = document.createElement('tr');
-          
-          // Status badge class
-          let statusClass = '';
-          switch(task.status) {
-            case 'open': statusClass = 'ea-badge-primary'; break;
-            case 'in-progress': statusClass = 'ea-badge-warning'; break;
-            case 'review': statusClass = 'ea-badge-info'; break;
-            case 'completed': statusClass = 'ea-badge-success'; break;
-          }
-          
-          // Priority badge class
-          let priorityClass = '';
-          switch(task.priority) {
-            case 'high': priorityClass = 'ea-badge-danger'; break;
-            case 'medium': priorityClass = 'ea-badge-warning'; break;
-            case 'low': priorityClass = 'ea-badge-secondary'; break;
-          }
-          
-          // Assignee name
-          let assigneeName = 'Unassigned';
-          let assigneeInitials = '--';
-          switch(task.assignee) {
-            case 'alex': 
-              assigneeName = 'Alex Smith';
-              assigneeInitials = 'AS';
-              break;
-            case 'jamie': 
-              assigneeName = 'Jamie Lee';
-              assigneeInitials = 'JL';
-              break;
-            case 'taylor': 
-              assigneeName = 'Taylor Wong';
-              assigneeInitials = 'TW';
-              break;
-          }
-          
-          // Related item links
-          let relatedLink = '';
-          if (task.relatedTo === 'email') {
-            relatedLink = `<a href="inbox.html">${task.relatedItem}</a>`;
-          } else if (task.relatedTo === 'automation') {
-            relatedLink = `<a href="automation.html">${task.relatedItem}</a>`;
-          } else if (task.relatedTo === 'workflow') {
-            relatedLink = `<a href="flowconnect.html">${task.relatedItem}</a>`;
-          } else {
-            relatedLink = '--';
-          }
-          
-          row.innerHTML = `
-            <td><input type="checkbox" class="form-check-input task-check" data-id="${task.id}"></td>
-            <td>${task.title}</td>
-            <td>${relatedLink}</td>
-            <td><span class="ea-badge ${priorityClass}">${task.priority}</span></td>
-            <td><span class="ea-badge ${statusClass}">${task.status}</span></td>
-            <td>${task.dueDate}</td>
-            <td>
-              ${task.assignee ? 
-                `<div class="d-flex align-items-center">
-                  <div class="ea-avatar ea-avatar-sm me-2" style="background-color: var(--ea-primary);">${assigneeInitials}</div>
-                  <span>${assigneeName}</span>
-                </div>` : 
-                'Unassigned'}
-            </td>
-            <td>
-              <div class="d-flex gap-2">
-                <button class="ea-btn ea-btn-sm ea-btn-outline-secondary edit-task" data-id="${task.id}">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button class="ea-btn ea-btn-sm ea-btn-outline-danger delete-task" data-id="${task.id}">
-                  <i class="bi bi-trash"></i>
-                </button>
+    ];
+
+    // Available reply batches for assignment
+    const availableBatches = [
+      { id: 1, name: "Refunds Batch", type: "refunds", priority: "high", count: 45 },
+      { id: 2, name: "Order Confirmations", type: "billing", priority: "normal", count: 120 },
+      { id: 3, name: "Shipping Issues", type: "shipping", priority: "high", count: 67 },
+      { id: 4, name: "Technical Support", type: "technical", priority: "urgent", count: 23 },
+      { id: 5, name: "VIP Customer Inquiries", type: "billing", priority: "urgent", count: 8 },
+      { id: 6, name: "Product Questions", type: "support", priority: "normal", count: 89 }
+    ];
+
+    // Render agents
+    function renderAgents(agentsToRender = agents) {
+      const agentList = document.getElementById('agentList');
+      agentList.innerHTML = '';
+
+      agentsToRender.forEach(agent => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="checkbox" class="form-check-input" value="${agent.id}"></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-circle me-3">${agent.name.split(' ').map(n => n[0]).join('')}</div>
+              <div>
+                <div class="fw-medium">${agent.name}</div>
+                <small class="text-muted">${agent.email}</small>
               </div>
-            </td>
-          `;
-          
-          taskListEl.appendChild(row);
-        });
-        
-        // Add event listeners for edit and delete buttons
-        document.querySelectorAll('.edit-task').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const taskId = this.getAttribute('data-id');
-            // Open edit modal with task data
-            alert(`Edit task ${taskId} (Modal would open here)`);
-          });
-        });
-        
-        document.querySelectorAll('.delete-task').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const taskId = this.getAttribute('data-id');
-            if (confirm('Are you sure you want to delete this task?')) {
-              // Delete task logic would go here
-              alert(`Task ${taskId} deleted`);
-            }
-          });
-        });
+            </div>
+          </td>
+          <td><span class="badge bg-light text-dark">${getDepartmentLabel(agent.department)}</span></td>
+          <td><span class="badge bg-${getStatusColor(agent.status)}">${getStatusLabel(agent.status)}</span></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <span class="me-2">${agent.currentBatches}/${agent.maxBatches}</span>
+              <div class="progress" style="width: 60px; height: 8px;">
+                <div class="progress-bar ${agent.currentBatches >= agent.maxBatches * 0.8 ? 'bg-warning' : 'bg-primary'}" 
+                     style="width: ${(agent.currentBatches / agent.maxBatches) * 100}%"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge ${agent.pendingReviews > 5 ? 'bg-warning' : 'bg-light text-dark'}">
+              ${agent.pendingReviews}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <span class="me-2">${agent.performance}%</span>
+              <div class="progress" style="width: 50px; height: 8px;">
+                <div class="progress-bar ${getPerformanceColor(agent.performance)}" 
+                     style="width: ${agent.performance}%"></div>
+              </div>
+            </div>
+          </td>
+          <td><small class="text-muted">${formatLastActive(agent.lastActive)}</small></td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="assignBatches(${agent.id})"><i class="bi bi-plus-circle me-2"></i>Assign Batches</a></li>
+                <li><a class="dropdown-item" href="#" onclick="viewAgent(${agent.id})"><i class="bi bi-eye me-2"></i>View Details</a></li>
+                <li><a class="dropdown-item" href="#" onclick="editAgent(${agent.id})"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item ${agent.status === 'offline' ? 'text-success' : 'text-warning'}" href="#" onclick="toggleAgentStatus(${agent.id})">
+                  <i class="bi bi-${agent.status === 'offline' ? 'play' : 'pause'}-circle me-2"></i>
+                  ${agent.status === 'offline' ? 'Activate' : 'Deactivate'}
+                </a></li>
+                <li><a class="dropdown-item text-danger" href="#" onclick="removeAgent(${agent.id})"><i class="bi bi-trash me-2"></i>Remove</a></li>
+              </ul>
+            </div>
+          </td>
+        `;
+        agentList.appendChild(row);
+      });
+    }
+
+    // Helper functions
+    function getDepartmentLabel(dept) {
+      const labels = {
+        'support': 'Customer Support',
+        'sales': 'Sales',
+        'technical': 'Technical'
+      };
+      return labels[dept] || dept;
+    }
+
+    function getStatusColor(status) {
+      switch(status) {
+        case 'active': return 'success';
+        case 'busy': return 'warning';
+        case 'offline': return 'secondary';
+        default: return 'secondary';
       }
+    }
+
+    function getStatusLabel(status) {
+      switch(status) {
+        case 'active': return 'Active';
+        case 'busy': return 'Busy';
+        case 'offline': return 'Offline';
+        default: return status;
+      }
+    }
+
+    function getPerformanceColor(performance) {
+      if (performance >= 95) return 'bg-success';
+      if (performance >= 85) return 'bg-primary';
+      if (performance >= 70) return 'bg-warning';
+      return 'bg-danger';
+    }
+
+    function formatLastActive(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
       
-      // Initialize task list
-      renderTasks();
-      
-      // New Task button
-      document.getElementById('newTaskBtn').addEventListener('click', function() {
-        const modal = new bootstrap.Modal(document.getElementById('taskModal'));
+      if (diffHours < 1) return 'Just now';
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Filter agents
+    function filterAgents() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const departmentFilter = document.getElementById('departmentFilter').value;
+      const workloadFilter = document.getElementById('workloadFilter').value;
+      const batchFilter = document.getElementById('batchFilter').value;
+
+      let filteredAgents = agents.filter(agent => {
+        const workloadMatch = workloadFilter === 'all' || 
+          (workloadFilter === 'light' && agent.currentBatches <= 5) ||
+          (workloadFilter === 'moderate' && agent.currentBatches >= 6 && agent.currentBatches <= 15) ||
+          (workloadFilter === 'heavy' && agent.currentBatches >= 16);
+
+        const batchMatch = batchFilter === 'all' ||
+          (batchFilter === 'available' && agent.currentBatches < agent.maxBatches) ||
+          (batchFilter === 'overloaded' && agent.currentBatches >= agent.maxBatches * 0.9);
+
+        return (statusFilter === 'all' || agent.status === statusFilter) &&
+               (departmentFilter === 'all' || agent.department === departmentFilter) &&
+               workloadMatch && batchMatch;
+      });
+
+      renderAgents(filteredAgents);
+    }
+
+    // Agent actions
+    function assignBatches(agentId) {
+      const agent = agents.find(a => a.id === agentId);
+      if (agent) {
+        document.getElementById('assignAgentName').textContent = agent.name;
+        
+        // Populate available batches
+        const batchesContainer = document.getElementById('availableBatches');
+        batchesContainer.innerHTML = '';
+        
+        availableBatches.forEach(batch => {
+          const batchItem = document.createElement('div');
+          batchItem.className = 'form-check mb-2';
+          batchItem.innerHTML = `
+            <input class="form-check-input" type="checkbox" value="${batch.id}" id="batch-${batch.id}">
+            <label class="form-check-label w-100" for="batch-${batch.id}">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-medium">${batch.name}</div>
+                  <small class="text-muted">${batch.count} replies • ${batch.type}</small>
+                </div>
+                <span class="badge bg-${batch.priority === 'urgent' ? 'danger' : batch.priority === 'high' ? 'warning' : 'primary'}">
+                  ${batch.priority}
+                </span>
+              </div>
+            </label>
+          `;
+          batchesContainer.appendChild(batchItem);
+        });
+        
+        const modal = new bootstrap.Modal(document.getElementById('batchAssignModal'));
+        modal.show();
+      }
+    }
+
+    function viewAgent(agentId) {
+      const agent = agents.find(a => a.id === agentId);
+      if (agent) {
+        alert(`Agent: ${agent.name}\nDepartment: ${getDepartmentLabel(agent.department)}\nRole: ${agent.role}\nCurrent Batches: ${agent.currentBatches}/${agent.maxBatches}\nPerformance: ${agent.performance}%\nSpecializations: ${agent.specializations.join(', ')}`);
+      }
+    }
+
+    function editAgent(agentId) {
+      const agent = agents.find(a => a.id === agentId);
+      if (agent) {
+        // Populate form with agent data
+        document.getElementById('agentName').value = agent.name;
+        document.getElementById('agentEmail').value = agent.email;
+        document.getElementById('agentDepartment').value = agent.department;
+        document.getElementById('agentRole').value = agent.role;
+        document.getElementById('maxBatches').value = agent.maxBatches;
+        document.getElementById('agentShift').value = agent.shift;
+        
+        // Set specializations
+        agent.specializations.forEach(spec => {
+          const checkbox = document.getElementById(`spec-${spec}`);
+          if (checkbox) checkbox.checked = true;
+        });
+        
+        document.getElementById('agentModalTitle').textContent = 'Edit Agent';
+        const modal = new bootstrap.Modal(document.getElementById('agentModal'));
+        modal.show();
+      }
+    }
+
+    function toggleAgentStatus(agentId) {
+      const agent = agents.find(a => a.id === agentId);
+      if (agent) {
+        agent.status = agent.status === 'offline' ? 'active' : 'offline';
+        if (agent.status === 'offline') {
+          agent.currentBatches = 0;
+          agent.pendingReviews = 0;
+        }
+        renderAgents();
+      }
+    }
+
+    function removeAgent(agentId) {
+      if (confirm('Are you sure you want to remove this agent? This action cannot be undone.')) {
+        const index = agents.findIndex(a => a.id === agentId);
+        if (index > -1) {
+          agents.splice(index, 1);
+          renderAgents();
+        }
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      renderAgents();
+
+      // Add CSS for avatar circles
+      const style = document.createElement('style');
+      style.textContent = `
+        .avatar-circle {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 600;
+          font-size: 14px;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Filter event listeners
+      document.getElementById('statusFilter').addEventListener('change', filterAgents);
+      document.getElementById('departmentFilter').addEventListener('change', filterAgents);
+      document.getElementById('workloadFilter').addEventListener('change', filterAgents);
+      document.getElementById('batchFilter').addEventListener('change', filterAgents);
+
+      // New agent button
+      document.getElementById('newAgentBtn').addEventListener('click', function() {
+        document.getElementById('agentForm').reset();
+        document.getElementById('agentModalTitle').textContent = 'Add New Agent';
+        const modal = new bootstrap.Modal(document.getElementById('agentModal'));
         modal.show();
       });
-      
-      // Related To dropdown change
-      document.getElementById('taskRelatedTo').addEventListener('change', function() {
-        const container = document.getElementById('relatedItemContainer');
-        const relatedItemSelect = document.getElementById('relatedItem');
+
+      // Save agent button
+      document.getElementById('saveAgent').addEventListener('click', function() {
+        const name = document.getElementById('agentName').value;
+        const email = document.getElementById('agentEmail').value;
+        const department = document.getElementById('agentDepartment').value;
+        const role = document.getElementById('agentRole').value;
+        const maxBatches = parseInt(document.getElementById('maxBatches').value);
+        const shift = document.getElementById('agentShift').value;
         
-        if (this.value) {
-          container.style.display = 'block';
-          relatedItemSelect.innerHTML = '';
-          
-          // Populate related items based on selection
-          if (this.value === 'email') {
-            ['RE: Order #12345 Refund', 'Customer Inquiry #54321', 'New Product Feedback'].forEach(item => {
-              const option = document.createElement('option');
-              option.value = item;
-              option.textContent = item;
-              relatedItemSelect.appendChild(option);
-            });
-          } else if (this.value === 'automation') {
-            ['Support Ticket Auto-Reply', 'Order Confirmation', 'PII Detection'].forEach(item => {
-              const option = document.createElement('option');
-              option.value = item;
-              option.textContent = item;
-              relatedItemSelect.appendChild(option);
-            });
-          } else if (this.value === 'workflow') {
-            ['Order Processing Flow', 'Customer Onboarding', 'Support Escalation'].forEach(item => {
-              const option = document.createElement('option');
-              option.value = item;
-              option.textContent = item;
-              relatedItemSelect.appendChild(option);
-            });
-          }
-        } else {
-          container.style.display = 'none';
+        // Get selected specializations
+        const specializations = [];
+        document.querySelectorAll('input[id^="spec-"]:checked').forEach(cb => {
+          specializations.push(cb.value);
+        });
+
+        if (name && email && department && role) {
+          const newAgent = {
+            id: agents.length + 1,
+            name: name,
+            email: email,
+            department: department,
+            role: role,
+            status: 'active',
+            currentBatches: 0,
+            pendingReviews: 0,
+            performance: 85,
+            lastActive: new Date().toISOString().slice(0, 16).replace('T', ' '),
+            maxBatches: maxBatches,
+            shift: shift,
+            specializations: specializations,
+            assignedBatches: []
+          };
+
+          agents.push(newAgent);
+          renderAgents();
+
+          const modal = bootstrap.Modal.getInstance(document.getElementById('agentModal'));
+          modal.hide();
         }
       });
-      
-      // Save Task button
-      document.getElementById('saveTaskBtn').addEventListener('click', function() {
-        // Form validation would go here
-        alert('Task saved successfully!');
-        const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
-        modal.hide();
-      });
-      
-      // Filter functionality
-      const filters = ['statusFilter', 'priorityFilter', 'assigneeFilter'];
-      filters.forEach(filterId => {
-        document.getElementById(filterId).addEventListener('change', applyFilters);
-      });
-      
-      function applyFilters() {
-        const statusFilter = document.getElementById('statusFilter').value;
-        const priorityFilter = document.getElementById('priorityFilter').value;
-        const assigneeFilter = document.getElementById('assigneeFilter').value;
-        
-        const filteredTasks = tasks.filter(task => {
-          const statusMatch = statusFilter === 'all' || task.status === statusFilter;
-          const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter;
-          
-          let assigneeMatch = true;
-          if (assigneeFilter === 'me') {
-            assigneeMatch = task.assignee === 'alex'; // Assuming current user is Alex
-          } else if (assigneeFilter === 'unassigned') {
-            assigneeMatch = !task.assignee;
-          }
-          
-          return statusMatch && priorityMatch && assigneeMatch;
+
+      // Confirm batch assignment
+      document.getElementById('confirmAssignment').addEventListener('click', function() {
+        const selectedBatches = [];
+        document.querySelectorAll('#availableBatches input:checked').forEach(cb => {
+          const batch = availableBatches.find(b => b.id == cb.value);
+          if (batch) selectedBatches.push(batch.name);
         });
         
-        renderTasks(filteredTasks);
-      }
-      
+        if (selectedBatches.length > 0) {
+          alert(`Successfully assigned ${selectedBatches.length} batch(es): ${selectedBatches.join(', ')}`);
+          const modal = bootstrap.Modal.getInstance(document.getElementById('batchAssignModal'));
+          modal.hide();
+        }
+      });
+
       // Select all checkbox
       document.getElementById('selectAll').addEventListener('change', function() {
-        document.querySelectorAll('.task-check').forEach(checkbox => {
-          checkbox.checked = this.checked;
-        });
+        const checkboxes = document.querySelectorAll('#agentList input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
       });
     });
   </script>
 <script>
     // Sidebar functionality
     document.addEventListener('DOMContentLoaded', function() {
-      const sidebar = document.getElementById('sidebar');
+      const sidebar = document.querySelector('.ea-sidebar');
       const sidebarToggle = document.getElementById('sidebarToggle');
       const sidebarClose = document.getElementById('sidebarClose');
       
@@ -540,13 +735,13 @@
       }
 
       function openSidebar() {
-        sidebar.classList.add('show');
+        sidebar.classList.add('ea-sidebar-mobile-open');
         backdrop.style.display = 'block';
         document.body.style.overflow = 'hidden';
       }
 
       function closeSidebar() {
-        sidebar.classList.remove('show');
+        sidebar.classList.remove('ea-sidebar-mobile-open');
         backdrop.style.display = 'none';
         document.body.style.overflow = '';
       }
