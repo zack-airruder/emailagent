@@ -53,7 +53,7 @@ return new class extends Migration
             // Response Information
             $table->enum('response_status', ['none', 'auto_replied', 'escalated', 'manual_reply', 'suppressed'])->default('none');
             $table->uuid('response_id')->nullable(); // Links to send_logs
-            $table->foreignUuid('escalation_id')->nullable()->constrained('escalations');
+            $table->uuid('escalation_id')->nullable(); // Will add foreign key constraint later
             
             // Deduplication
             $table->boolean('is_duplicate')->default(false);

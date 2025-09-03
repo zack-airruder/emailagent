@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamp('assigned_at')->nullable();
             
             // SLA Tracking
-            $table->timestamp('sla_deadline');
+            $table->timestamp('sla_deadline')->nullable();
             $table->boolean('sla_breached')->default(false);
             $table->timestamp('sla_breach_time')->nullable();
             

@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:web');
 
 // Account Management Routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:web')->group(function () {
     // Account management routes
     Route::apiResource('accounts', AccountController::class);
     Route::post('accounts/{account}/test-connection', [AccountController::class, 'testConnection']);
